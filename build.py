@@ -19,6 +19,16 @@ for group in DATA.values():
             it["w"], it["h"] = 640, 800
 BLANK = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
 
+
+def stamp(name):
+    """Short fingerprint of an asset file, so browsers fetch the new copy after every change."""
+    import hashlib
+    with open(os.path.join(HERE, "assets", name), "rb") as f:
+        return hashlib.sha1(f.read()).hexdigest()[:8]
+
+
+CSS_V, JS_V = stamp("site.css"), stamp("site.js")
+
 SERIES = [
     ("rain-dance.html", "Rain Dance"),
     ("art-or-war.html", "Art or War"),
@@ -87,7 +97,7 @@ def footer():
     <button class="n" type="button" aria-label="Next image">›</button>
   </div>
 </dialog>
-<script src="assets/site.js" defer></script>"""
+<script src="assets/site.js?v={JS_V}" defer></script>"""
 
 
 def page(slug, title, desc, body, og=None, preload=None):
@@ -107,7 +117,7 @@ def page(slug, title, desc, body, og=None, preload=None):
 {pre}<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/site.css?v={CSS_V}">
 <script>document.documentElement.classList.add('js')</script>
 </head>
 <body id="top">
