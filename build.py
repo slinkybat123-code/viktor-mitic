@@ -706,6 +706,7 @@ def build_available():
   <div class="wrap">
     <div class="filters" role="group" aria-label="Filter by type">{chips}</div>
     <p class="count" id="count" aria-live="polite">Showing {total} of {total} works</p>
+    <h2 class="sr">Works</h2>
     <div class="gal">{cards}</div>
     <p class="note">Prices, dimensions and availability are confirmed by the studio on request. Select any image to enlarge it.</p>
   </div>

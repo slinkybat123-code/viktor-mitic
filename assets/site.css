@@ -32,7 +32,7 @@ p{color:var(--soft)}
 .btn.fill{background:var(--gold);color:var(--bg)}
 .btn.fill:hover{background:transparent;color:var(--gold)}
 .btn.ghost:hover{background:var(--gold);color:var(--bg)}
-.btn.small{padding:12px 18px;font-size:10px}
+.btn.small{padding:12px 18px;font-size:11px}
 .actions{display:flex;gap:18px;flex-wrap:wrap;margin-top:34px}
 
 /* nav */
@@ -123,7 +123,7 @@ section.tight{padding:clamp(48px,7vw,96px) 0}
 .cap .label{display:block;margin-bottom:10px}
 .cap h3{font-size:clamp(26px,2.6vw,38px);font-style:italic}
 .cap p{font-size:14px;line-height:1.55;margin:10px 0 12px;max-width:440px;color:var(--soft)}
-.cap .go{font:500 10px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.cap .go{font:500 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 .c1{grid-column:span 7;aspect-ratio:auto;align-self:stretch;min-height:320px}.c2{grid-column:span 5}.c3,.c4,.c5{grid-column:span 4}
 
 /* horizontal strips */
@@ -153,7 +153,7 @@ section.tight{padding:clamp(48px,7vw,96px) 0}
 .chip .n{opacity:.65;margin-left:6px}
 .work{border:1px solid var(--line)}
 .work figcaption{padding:16px 16px 18px}
-.work .ref{font:500 10px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:8px}
+.work .ref{font:500 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:8px}
 .work h3{font-size:24px;font-style:italic;margin-bottom:6px}
 .work p{font-size:13px;line-height:1.55;color:var(--muted);margin-bottom:12px}
 .work[hidden]{display:none}
@@ -212,7 +212,7 @@ a.book:hover{background:var(--bg2)}
 .feature .press a:hover{background:var(--bg)}
 .press .o{font:300 clamp(24px,2.6vw,36px)/1.15 var(--serif)}
 .press .s{color:var(--muted);font-size:15px}
-.press .r{font:500 10px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.press .r{font:500 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 .press .dead .o,.press .dead .r{color:var(--muted)}
 .press-foot{margin-top:34px}
 
@@ -226,7 +226,7 @@ a.book:hover{background:var(--bg2)}
 .video .frame button::after{content:"▶";position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:var(--gold);background:rgba(11,10,9,.6);font-size:18px;padding-left:4px}
 .video .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .video h3{font:300 22px/1.25 var(--serif);padding:16px 18px 4px}
-.video p{font-size:12px;color:var(--muted);padding:0 18px 16px;letter-spacing:.06em}
+.video p{font-size:12px;color:var(--muted);padding:0 18px 16px}
 
 /* 3D viewer */
 .viewer{background:#fff;border:1px solid var(--line);aspect-ratio:800/708;max-width:802px;margin:0 auto;position:relative;overflow:hidden;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
@@ -338,11 +338,20 @@ span.rv{display:inline-block}
 }
 
 @media print{
-  nav.top,#ring,footer,.skip,.actions,.cta-band,.pager,dialog{display:none!important}
+  /* flip every colour token so all text prints dark on white */
+  :root{--bg:#fff;--bg2:#fff;--bg3:#f3f3f3;--ink:#000;--soft:#1c1c1c;--muted:#444;--gold:#000;--line:rgba(0,0,0,.3)}
+  nav.top,#ring,footer,.skip,.actions,.cta-band,.pager,dialog,#rain,.scroll,.filters,.tabs{display:none!important}
   body{background:#fff;color:#000}
-  p,.rows p span,.films .d{color:#222}
-  .label,.rows .yr,.timeline .yr,.films .y,h2 em,h1 em{color:#000}
-  .phero.plain{padding-top:0}
+  .hero p,.phero .intro,.banner p{color:#1c1c1c}
+  .phero>img,.hero-img,.banner>img{display:none}
+  .phero::before,.hero::before,.banner::before{content:none}
+  .hero,.phero,.banner{min-height:0}
+  .phero .wrap,.phero.plain{padding-block:0 12px}
+  .hero-body{padding:0 var(--gutter) 12px}
+  .cap{position:static;background:none;padding:8px 0 0}
+  .card,.place{aspect-ratio:auto}
+  .card img,.place img{position:static;height:auto;filter:none}
   .js .rv{opacity:1;transform:none}
   section{padding:24px 0}
+  a{text-decoration:none}
 }
