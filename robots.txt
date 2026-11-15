@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://slinkybat123-code.github.io/viktor-mitic/sitemap.xml

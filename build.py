@@ -4,11 +4,13 @@ Run:  python build.py
 Reads data/site.json (image lists) and writes the .html files next to this script.
 Edit the text in this file, run it again, then commit and push.
 """
-import json, os, re
+import json, os, re, sys
 from html import escape as esc
 from urllib.parse import quote
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+import site_meta  # noqa: E402  canonical addresses, sharing tags, sitemap (see site_meta.py)
 U = "https://artorwar.com/wp-content/uploads/"          # images are still served from here
 V = "https://artorwar.com/wp-content/themes/customizr/"  # 3D turntable files
 EMAIL = "info@artorwar.com"
@@ -24,7 +26,7 @@ def stamp(name):
     """Short fingerprint of an asset file, so browsers fetch the new copy after every change."""
     import hashlib
     with open(os.path.join(HERE, "assets", name), "rb") as f:
-        return hashlib.sha1(f.read()).hexdigest()[:8]
+        return hashlib.sha1(f.read().replace(b"\r\n", b"\n")).hexdigest()[:8]
 
 
 CSS_V, JS_V = stamp("site.css"), stamp("site.js")
@@ -113,6 +115,7 @@ def page(slug, title, desc, body, og=None, preload=None):
 <meta property="og:title" content="{esc(title)}">
 <meta property="og:description" content="{esc(desc)}">
 <meta property="og:image" content="{og}">
+{site_meta.head_extra(slug, title, desc)}
 <link rel="icon" href="{U}2017/11/cropped-Viktor_doc-155-32x32.jpg">
 {pre}<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1002,4 +1005,6 @@ def build_404():
 if __name__ == "__main__":
     built = [f() for f in (build_index, build_rain, build_war, build_dealers, build_sculptures, build_3d, build_available,
                            build_press, build_books, build_cv, build_acquisitions, build_contact, build_404)]
+    listed = site_meta.finish(built)
     print("built", len(built), "pages:", ", ".join(built))
+    print("sitemap.xml lists", listed, "pages; robots.txt written")
