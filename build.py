@@ -59,7 +59,7 @@ def nav(current):
   <button class="burger" id="burger" aria-expanded="false" aria-controls="links">Menu</button>
   <div class="links" id="links">
     <a href="index.html#artist">The Artist</a>
-    <div class="dd"><button class="dd-btn" type="button" aria-expanded="false">Works</button><div class="dd-menu">{works}</div></div>
+    <div class="dd"><button class="dd-btn" type="button" aria-expanded="false">Works</button><span class="label dd-label">Works</span><div class="dd-menu">{works}</div></div>
     {rest}
     <a class="cta" href="contact.html"{cur("contact.html")}>Enquire</a>
   </div>
@@ -188,14 +188,15 @@ def pager(slug):
     return f'<div class="wrap"><div class="pager">{prev}{nxt}</div></div>'
 
 
-def cta(h2, text, topic=""):
+def cta(h2, text, topic="", alt=("available-work.html", "View available work")):
     href = "contact.html" + (f"?topic={quote(topic)}" if topic else "")
+    alt_href, alt_text = alt
     return f"""<section class="cta-band tight">
   <div class="wrap">
     <span class="label">Enquire</span>
     <h2>{h2}</h2>
     <p>{text}</p>
-    <div class="actions"><a class="btn fill" href="{href}">Contact the studio</a><a class="btn ghost" href="available-work.html">View available work</a></div>
+    <div class="actions"><a class="btn fill" href="{href}">Contact the studio</a><a class="btn ghost" href="{alt_href}">{alt_text}</a></div>
   </div>
 </section>"""
 
@@ -714,7 +715,8 @@ def build_available():
     <p class="note">Prices, dimensions and availability are confirmed by the studio on request. Select any image to enlarge it.</p>
   </div>
 </section>
-{cta("Found something?", "Send the reference number and we will reply with price, size and shipping details.", "Available work")}
+{cta("Found something?", "Send the reference number and we will reply with price, size and shipping details.", "Available work",
+     ("index.html#works", "Browse the series"))}
 </main>"""
     return page("available-work.html", "Available work · Viktor Mitic", "Paintings, sculptures and Dealers portraits by Viktor Mitic currently available from the studio.", body,
                 og=U + by_file("avail", "PSX_20230408")["l"])
@@ -870,7 +872,7 @@ def build_cv():
                  "Public art, collections, exhibitions, films, books and education.") + f"""
 <main id="main">
 <section class="tight" style="padding-top:0">
-  <div class="wrap narrow">
+  <div class="wrap">
     <div class="actions" style="margin:0 0 clamp(40px,6vw,70px)"><button class="btn ghost small" type="button" onclick="window.print()">Print or save as PDF</button><a class="btn ghost small" href="contact.html">Contact the studio</a></div>
     {block("Public <em>art</em>", e(public))}
     {block("Collections", e(collections))}
@@ -958,7 +960,7 @@ def build_contact():
       <dl class="facts">
         <div><dt>Studios</dt><dd>Toronto, Ontario · Sarasota, Florida</dd></div>
         <div><dt>Gallery</dt><dd>Oeno Gallery, Prince Edward County, Ontario</dd></div>
-        <div><dt>Quote a reference</dt><dd>Each piece on the <a class="more" style="padding:0" href="available-work.html">available work</a> page has a number such as AW-12.</dd></div>
+        <div><dt>Quote a reference</dt><dd>Each piece on the <a class="inline" href="available-work.html">available work</a> page has a number such as AW-12.</dd></div>
       </dl>
     </div>
     <form class="enq" id="enquiry" novalidate>

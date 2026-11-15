@@ -16,8 +16,12 @@
   if(nav){
     const onScroll=()=>nav.classList.toggle('solid',scrollY>60);
     addEventListener('scroll',onScroll,{passive:true});onScroll();
-    const closeMenu=()=>{links.classList.remove('open');burger.setAttribute('aria-expanded','false')};
-    burger.onclick=()=>{const o=links.classList.toggle('open');burger.setAttribute('aria-expanded',o)};
+    const root=document.documentElement;
+    const setMenu=o=>{links.classList.toggle('open',o);burger.setAttribute('aria-expanded',o);burger.textContent=o?'Close':'Menu';
+      root.classList.toggle('menu-open',o);root.style.overflow=o?'hidden':''};
+    const closeMenu=()=>{if(links.classList.contains('open'))setMenu(false)};
+    burger.onclick=()=>{const o=!links.classList.contains('open');setMenu(o);if(o)$('a',links).focus({preventScroll:true})};
+    matchMedia('(max-width:1100px)').addEventListener('change',e=>{if(!e.matches)closeMenu()});
     links.addEventListener('click',e=>{if(e.target.closest('a'))closeMenu()});
     addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(links.classList.contains('open')){closeMenu();burger.focus()}$$('.dd.open').forEach(d=>d.classList.remove('open'))});
     document.addEventListener('click',e=>{if(links.classList.contains('open')&&!nav.contains(e.target))closeMenu();
@@ -47,6 +51,10 @@
     lb.addEventListener('click',e=>{if(e.target===lb||e.target.classList.contains('lb'))lb.close()});
     lb.addEventListener('close',()=>{document.documentElement.style.overflow='';img.src=BLANK;opener&&opener.focus()});
     lb.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')show(cur-1);if(e.key==='ArrowRight')show(cur+1)});
+    let tx=0,ty=0;
+    lb.addEventListener('touchstart',e=>{const t=e.changedTouches[0];tx=t.clientX;ty=t.clientY},{passive:true});
+    lb.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;
+      if(set.length>1&&Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)show(cur+(dx<0?1:-1))},{passive:true});
   }
 
   /* drag a strip with the mouse */
