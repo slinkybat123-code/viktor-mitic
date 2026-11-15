@@ -3,269 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Viktor Mitic — Art or War</title>
-<meta name="description" content="Viktor Mitic, Toronto painter and sculptor: Rain Dance paintings made in the rain, Art or War bullet-hole paintings, Dealers, sculpture and installations.">
-<meta property="og:title" content="Viktor Mitic — Art or War">
-<meta property="og:description" content="Paintings made in the rain, portraits drawn with bullets, sculpture in painted aluminum.">
+<title>Viktor Mitic · Art or War</title>
+<meta name="description" content="Viktor Mitic, painter and sculptor: Rain Dance paintings made in the rain, Art or War bullet-hole paintings, Dealers, sculpture and installations.">
+<meta property="og:title" content="Viktor Mitic · Art or War">
+<meta property="og:description" content="Viktor Mitic, painter and sculptor: Rain Dance paintings made in the rain, Art or War bullet-hole paintings, Dealers, sculpture and installations.">
 <meta property="og:image" content="https://artorwar.com/wp-content/uploads/2017/10/Diptych-10-Aug-08-sm-web.jpg">
 <link rel="icon" href="https://artorwar.com/wp-content/uploads/2017/11/cropped-Viktor_doc-155-32x32.jpg">
 <link rel="preload" as="image" href="https://artorwar.com/wp-content/uploads/2017/10/Diptych-10-Aug-08-sm-web.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
 <script>document.documentElement.classList.add('js')</script>
-<style>
-:root{
-  --bg:#0b0a09; --bg2:#12100e; --ink:#f2ece1; --soft:#cfc7ba; --muted:#a39a8d; --gold:#c8a35a;
-  --line:rgba(242,236,225,.14); --gutter:clamp(16px,4vw,56px);
-  --serif:"Cormorant Garamond",Georgia,serif; --sans:Inter,system-ui,sans-serif;
-  --ease:cubic-bezier(.2,.7,.2,1);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;scroll-padding-top:84px}
-body{background:var(--bg);color:var(--ink);font:300 16px/1.7 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-img{display:block;max-width:100%}
-a{color:inherit;text-decoration:none}
-ul{list-style:none}
-:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.skip{position:fixed;left:16px;top:-60px;z-index:100;background:var(--gold);color:var(--bg);padding:10px 16px;font:500 12px var(--sans);transition:top .2s}
-.skip:focus{top:12px}
-.wrap{max-width:1360px;margin:0 auto;padding:0 var(--gutter)}
-.label{font:500 11px/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
-h1,h2,h3{font-family:var(--serif);font-weight:300;line-height:1.05}
-h2 em{color:var(--gold)}
-p{color:var(--soft)}
-.more{display:inline-flex;align-items:center;gap:10px;font:500 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--gold);padding:8px 0;border-bottom:1px solid transparent;transition:border-color .3s,gap .3s}
-.more::after{content:"→";font-size:14px;letter-spacing:0}
-.more[target=_blank]::after{content:"↗"}
-.more:hover{border-color:var(--gold);gap:16px}
-
-/* nav */
-nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:22px var(--gutter);transition:padding .4s}
-nav::before{content:"";position:absolute;inset:0;z-index:-1;opacity:0;transition:opacity .4s;background:rgba(11,10,9,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-nav.solid::before{opacity:1}
-nav.solid{padding-block:14px}
-.brand{font:400 15px/1 var(--serif);letter-spacing:.38em;text-transform:uppercase}
-.links{display:flex;gap:30px;align-items:center}
-.links a{font:400 11px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--muted);transition:color .3s}
-.links a:hover{color:var(--ink)}
-.links .cta{color:var(--ink);border:1px solid var(--gold);padding:11px 18px;transition:background .3s,color .3s}
-.links .cta:hover{background:var(--gold);color:var(--bg)}
-.burger{display:none;position:relative;z-index:2;background:none;border:1px solid var(--line);color:var(--ink);padding:10px 14px;font:400 11px var(--sans);letter-spacing:.2em;text-transform:uppercase;cursor:pointer}
-
-/* hero */
-.hero{position:relative;min-height:100svh;display:grid;align-items:end;overflow:hidden;isolation:isolate}
-.hero-img{position:absolute;inset:-6% 0;z-index:-3;background:#1a1612 center/cover no-repeat;animation:kb 28s ease-in-out infinite alternate;will-change:transform}
-.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(11,10,9,.55) 0%,rgba(11,10,9,.15) 40%,rgba(11,10,9,.92) 100%)}
-#rain{position:absolute;inset:0;z-index:-2;width:100%;height:100%;pointer-events:none;opacity:.55}
-@keyframes kb{from{transform:scale(1.02)}to{transform:scale(1.12) translateY(-1.5%)}}
-.hero-body{padding:96px var(--gutter) clamp(56px,10vh,110px);max-width:1360px;margin:0 auto;width:100%}
-.hero h1{font-size:clamp(52px,10vw,148px);font-style:italic;letter-spacing:-.01em;margin:22px 0 26px}
-.hero h1 span{display:block;font-style:normal;font-size:.34em;letter-spacing:.34em;text-transform:uppercase;margin-top:.9em;color:var(--muted);font-family:var(--sans);font-weight:300}
-.hero p{max-width:480px;color:#d6cec1}
-.hero-actions{display:flex;gap:18px;flex-wrap:wrap;margin-top:34px}
-.btn{display:inline-block;font:500 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;padding:18px 28px;border:1px solid var(--gold);transition:background .3s,color .3s;cursor:pointer}
-.btn.fill{background:var(--gold);color:var(--bg)}
-.btn.fill:hover{background:transparent;color:var(--gold)}
-.btn.ghost:hover{background:var(--gold);color:var(--bg)}
-.scroll{position:absolute;right:var(--gutter);bottom:44px;writing-mode:vertical-rl;font:400 10px var(--sans);letter-spacing:.3em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:14px}
-.scroll::after{content:"";width:1px;height:70px;background:linear-gradient(var(--gold),transparent)}
-
-/* cities band */
-.cities{border-block:1px solid var(--line);padding:26px 0;background:var(--bg2)}
-.cities ul{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 38px;font:italic 300 clamp(18px,2vw,26px)/1.2 var(--serif);color:var(--soft)}
-.cities li+li::before{content:"·";color:var(--gold);margin-right:38px}
-.cities .label{display:block;text-align:center;margin-bottom:16px}
-
-section{padding:clamp(80px,12vw,170px) 0}
-.sec-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:56px;flex-wrap:wrap}
-.sec-head h2{font-size:clamp(38px,6vw,88px)}
-
-/* artist */
-.artist{display:grid;grid-template-columns:1fr 1.4fr;gap:clamp(32px,7vw,120px);align-items:start}
-.artist h2{font-size:clamp(34px,5vw,72px);margin-top:22px}
-.artist p{font-size:17px;max-width:600px}
-.artist p+p{margin-top:1.3em}
-.artist .lead{font:300 clamp(22px,2.4vw,30px)/1.4 var(--serif);color:var(--ink);margin-bottom:28px}
-.artist .more{margin-top:30px;margin-right:28px}
-.studio{margin-top:clamp(48px,7vw,96px);position:relative;aspect-ratio:1024/497;overflow:hidden;background:var(--bg2)}
-.studio img{width:100%;height:100%;object-fit:cover;filter:saturate(.85) brightness(.85)}
-.studio span{position:absolute;left:24px;bottom:20px}
-
-/* works */
-.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(14px,2vw,28px)}
-.card{position:relative;overflow:hidden;background:var(--bg2);aspect-ratio:4/5;display:block}
-.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--ease),filter .6s;filter:saturate(.85) brightness(.72)}
-.card:hover img,.card:focus-visible img{transform:scale(1.06);filter:saturate(1) brightness(.9)}
-.cap{position:absolute;left:0;right:0;bottom:0;padding:90px 26px 26px;background:linear-gradient(transparent,rgba(11,10,9,.94) 62%)}
-.cap .label{display:block;margin-bottom:10px}
-.cap h3{font-size:clamp(26px,2.6vw,38px);font-style:italic}
-.cap p{font-size:14px;line-height:1.55;margin:10px 0 12px;max-width:440px;color:var(--soft)}
-.cap .go{font:500 10px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
-.c1{grid-column:span 7;aspect-ratio:auto;align-self:stretch;min-height:320px}.c2{grid-column:span 5}.c3,.c4,.c5{grid-column:span 4}
-
-/* feature blocks */
-.feature{background:var(--bg2);border-block:1px solid var(--line)}
-.split{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(32px,6vw,100px);align-items:center;margin-bottom:clamp(48px,7vw,90px)}
-.split h2{font-size:clamp(38px,6vw,88px);margin:22px 0 28px}
-.split p+p{margin-top:1.2em}
-.split .more{margin-top:26px}
-.quote{font:italic 300 clamp(26px,3.2vw,44px)/1.25 var(--serif);color:var(--ink);padding-left:28px;border-left:1px solid var(--gold)}
-.quote cite{display:block;margin-top:18px;font:500 11px/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-style:normal}
-.strip{display:flex;gap:clamp(14px,2vw,26px);overflow-x:auto;scroll-snap-type:x mandatory;padding:0 var(--gutter) 28px;scrollbar-width:thin;scrollbar-color:var(--gold) transparent}
-.strip button{flex:0 0 clamp(240px,28vw,400px);aspect-ratio:1;scroll-snap-align:start;border:0;padding:0;background:#1a1612;cursor:zoom-in;overflow:hidden}
-.strip img{width:100%;height:100%;object-fit:cover;transition:transform 1s,opacity .4s;opacity:.88}
-.strip button:hover img{transform:scale(1.07);opacity:1}
-.strip button.wide{flex-basis:clamp(300px,40vw,580px);aspect-ratio:4/3}
-.hint{display:block;padding:0 var(--gutter);margin-bottom:22px}
-
-/* incident banner */
-.banner{position:relative;min-height:min(78vh,720px);display:grid;align-items:end;isolation:isolate;overflow:hidden;padding:0}
-.banner img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover}
-.banner::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(11,10,9,.92) 0%,rgba(11,10,9,.55) 55%,rgba(11,10,9,.2) 100%),linear-gradient(0deg,rgba(11,10,9,.8),transparent 50%)}
-.banner .wrap{width:100%;padding-block:clamp(48px,8vw,96px)}
-.banner h2{font-size:clamp(44px,8vw,120px);font-style:italic;margin:20px 0}
-.banner p{max-width:520px;color:#ddd5c8}
-.banner .row{display:flex;gap:28px;flex-wrap:wrap;margin-top:24px}
-
-/* sculpture */
-.places{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,2vw,26px)}
-.place{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--bg2);display:block}
-.place img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--ease);filter:brightness(.88)}
-.place:hover img{transform:scale(1.05)}
-.place .cap{padding:60px 20px 20px}
-.place h3{font-size:26px;font-style:italic}
-.place .where{font-size:13px;color:var(--muted)}
-.chips{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:clamp(36px,5vw,60px)}
-.chips .label{margin-right:10px}
-.chip{border:1px solid var(--line);padding:12px 18px;font:400 11px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;transition:border-color .3s,color .3s}
-.chip:hover{border-color:var(--gold);color:var(--gold)}
-
-/* timeline */
-.timeline li{display:grid;grid-template-columns:clamp(90px,14vw,200px) 1fr;gap:clamp(16px,4vw,60px);padding:26px 0;border-top:1px solid var(--line);align-items:baseline}
-.timeline li:last-child{border-bottom:1px solid var(--line)}
-.timeline .yr{font:300 clamp(30px,4vw,54px)/1 var(--serif);color:var(--gold)}
-.timeline p{max-width:720px;font-size:17px}
-.timeline em{font-family:var(--serif);font-size:1.18em;color:var(--ink)}
-
-/* books + films */
-.books{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}
-.book{padding:38px 30px 34px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:12px;transition:background .3s}
-.book:last-child{border-right:0}
-.book:hover{background:var(--bg2)}
-.book .n{font:300 15px/1 var(--serif);color:var(--muted);letter-spacing:.1em}
-.book h3{font-size:clamp(30px,3vw,42px);font-style:italic}
-.book p{font-size:14px;flex:1}
-.films{margin-top:clamp(56px,7vw,90px)}
-.films h3{font-size:clamp(28px,3vw,40px);margin-bottom:22px}
-.films li{display:grid;grid-template-columns:1.4fr 1.4fr auto;gap:20px;padding:18px 0;border-top:1px solid var(--line);font-size:15px;align-items:baseline}
-.films li:last-child{border-bottom:1px solid var(--line)}
-.films .t{font:italic 300 24px/1.2 var(--serif)}
-.films .d{color:var(--muted)}
-.films .y{color:var(--gold);font-size:13px;letter-spacing:.14em}
-
-/* press */
-.press a{display:grid;grid-template-columns:1.1fr 1.6fr auto;gap:20px;align-items:baseline;padding:24px 0;border-top:1px solid var(--line);transition:padding .4s var(--ease),background .3s}
-.press li:last-child a{border-bottom:1px solid var(--line)}
-.press a:hover{padding-inline:18px;background:var(--bg2)}
-.press .o{font:300 clamp(24px,2.6vw,36px)/1.15 var(--serif)}
-.press .s{color:var(--muted);font-size:15px}
-.press .r{font:500 10px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
-.press-foot{margin-top:34px}
-
-/* collect */
-.collect{text-align:center}
-.collect h2{font-size:clamp(40px,7vw,104px);font-style:italic;margin:24px 0 28px}
-.collect p{max-width:540px;margin:0 auto 14px;color:var(--muted)}
-.collect .mail{display:inline-block;font:italic 300 clamp(24px,3vw,38px)/1.2 var(--serif);color:var(--ink);border-bottom:1px solid var(--gold);margin:6px 0 40px;padding-bottom:4px;transition:color .3s}
-.collect .mail:hover{color:var(--gold)}
-.collect .hero-actions{justify-content:center;margin-top:0}
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);margin-top:clamp(70px,10vw,130px);border-top:1px solid var(--line);text-align:left}
-.tiles a{padding:34px 28px;border-right:1px solid var(--line);transition:background .3s}
-.tiles a:last-child{border:0}
-.tiles a:hover{background:var(--bg2)}
-.tiles h3{font-size:30px;font-style:italic;margin-top:12px}
-.tiles .sub{display:block;margin-top:8px;color:var(--muted);font-size:14px}
-
-footer{border-top:1px solid var(--line);padding:64px 0 40px;color:var(--muted);font-size:14px}
-.foot{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px}
-.foot .brand{color:var(--ink);display:block;margin-bottom:16px}
-.foot h3{font:500 11px/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
-.foot li{margin-bottom:8px}
-.foot a:hover{color:var(--ink)}
-.legal{margin-top:48px;padding-top:22px;border-top:1px solid var(--line);font-size:12px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-
-/* lightbox */
-dialog{border:0;background:transparent;max-width:100vw;max-height:100vh;width:100%;height:100%;color:var(--ink)}
-dialog::backdrop{background:rgba(6,5,4,.96)}
-.lb{display:grid;place-items:center;height:100%;padding:56px 16px}
-.lb img{max-height:100%;max-width:100%;object-fit:contain}
-.lb button{position:absolute;background:none;border:0;color:var(--ink);font:300 34px var(--serif);cursor:pointer;padding:14px 20px}
-.lb .x{top:10px;right:10px}.lb .p{left:6px;top:50%;transform:translateY(-50%)}.lb .n{right:6px;top:50%;transform:translateY(-50%)}
-
-/* cursor + reveal */
-#ring{position:fixed;top:0;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;border:1px solid var(--gold);border-radius:50%;pointer-events:none;z-index:99;opacity:0;transition:opacity .3s,width .3s,height .3s,margin .3s}
-#ring.on{opacity:.8}#ring.big{width:64px;height:64px;margin:-32px 0 0 -32px}
-.js .rv{opacity:0;transform:translateY(36px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
-.js .rv.in{opacity:1;transform:none}
-span.rv{display:inline-block}
-
-@media (max-width:1040px){
-  .burger{display:block}
-  .links{position:fixed;inset:0 0 0 auto;width:min(78vw,320px);background:var(--bg);flex-direction:column;align-items:flex-start;justify-content:center;gap:26px;padding:40px;transform:translateX(100%);visibility:hidden;transition:transform .5s var(--ease),visibility 0s .5s;border-left:1px solid var(--line)}
-  .links.open{transform:none;visibility:visible;transition-delay:0s}
-  .places{grid-template-columns:repeat(2,1fr)}
-  .foot{grid-template-columns:1fr 1fr}
-}
-@media (max-width:860px){
-  .hero h1 span{font-size:.24em;letter-spacing:.2em}
-  .artist,.split{grid-template-columns:1fr}
-  .c1,.c2,.c3,.c4,.c5{grid-column:span 12;aspect-ratio:4/5}
-  .books,.tiles{grid-template-columns:1fr}
-  .book,.tiles a{border-right:0}
-  .tiles a{border-bottom:1px solid var(--line)}
-  .films li{grid-template-columns:1fr auto}.films .d{grid-column:1/-1;grid-row:2}
-  .press a{grid-template-columns:1fr auto}.press .s{grid-column:1/-1;grid-row:2}
-  .cities li+li::before{margin-right:14px}.cities ul{gap:8px 14px}
-  .scroll{display:none}
-  .banner::before{background:linear-gradient(0deg,rgba(11,10,9,.95) 20%,rgba(11,10,9,.35))}
-}
-@media (max-width:520px){.foot{grid-template-columns:1fr}.studio{aspect-ratio:4/3}}
-@media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}.hero-img{animation:none}#rain{display:none}
-  .js .rv{opacity:1;transform:none;transition:none}
-}
-</style>
 </head>
-<body>
+<body id="top">
 <a class="skip" href="#main">Skip to content</a>
 <div id="ring" aria-hidden="true"></div>
-
-<nav id="nav" aria-label="Primary">
-  <a class="brand" href="#top" aria-label="Viktor Mitic — Art or War, back to top">Art or War</a>
+<nav class="top" id="nav" aria-label="Primary">
+  <a class="brand" href="index.html" aria-label="Viktor Mitic, Art or War: home">Art or War</a>
   <button class="burger" id="burger" aria-expanded="false" aria-controls="links">Menu</button>
   <div class="links" id="links">
-    <a href="#artist">The Artist</a>
-    <a href="#works">Works</a>
-    <a href="#sculpture">Sculpture</a>
-    <a href="#timeline">Timeline</a>
-    <a href="#press">Press</a>
-    <a href="#collect">Collect</a>
-    <a class="cta" href="mailto:info@artorwar.com?subject=Enquiry%20about%20available%20work">Enquire</a>
+    <a href="index.html#artist">The Artist</a>
+    <div class="dd"><button class="dd-btn" type="button" aria-expanded="false">Works</button><div class="dd-menu"><a href="rain-dance.html">Rain Dance</a><a href="art-or-war.html">Art or War</a><a href="dealers.html">Dealers</a><a href="sculptures.html">Sculptures &amp; installations</a><a href="sculptures-3d.html">Sculptures in 3D</a></div></div>
+    <a href="available-work.html">Available</a><a href="press.html">Press</a><a href="books.html">Books</a><a href="cv.html">CV</a>
+    <a class="cta" href="contact.html">Enquire</a>
   </div>
 </nav>
-
-<header class="hero" id="top">
+<header class="hero">
   <div class="hero-img" id="heroImg" style="background-image:url('https://artorwar.com/wp-content/uploads/2017/10/Diptych-10-Aug-08-sm-web.jpg')"></div>
   <canvas id="rain" aria-hidden="true"></canvas>
   <div class="hero-body">
     <span class="label">Painting · Sculpture · Installation</span>
     <h1>Viktor Mitic<span>Rain Dance &nbsp;·&nbsp; Art or War</span></h1>
-    <p>A Toronto painter and sculptor who lets storms finish his canvases, draws portraits with live ammunition, and builds in painted aluminum.</p>
-    <div class="hero-actions">
+    <p>A painter and sculptor who lets storms finish his canvases, draws portraits with live ammunition, and builds in steel, gold and painted aluminum.</p>
+    <div class="actions">
       <a class="btn fill" href="#works">Explore the work</a>
-      <a class="btn ghost" href="https://artorwar.com/available-work/" target="_blank" rel="noopener">Available work</a>
+      <a class="btn ghost" href="available-work.html">Available work</a>
     </div>
   </div>
   <div class="scroll" aria-hidden="true">Scroll</div>
@@ -273,13 +46,10 @@ span.rv{display:inline-block}
 
 <div class="cities">
   <span class="label">Exhibited in</span>
-  <ul>
-    <li>Toronto</li><li>Tokyo</li><li>New York</li><li>Chicago</li><li>Washington, D.C.</li>
-  </ul>
+  <ul><li>Toronto</li><li>Tokyo</li><li>New York</li><li>Chicago</li><li>Washington, D.C.</li><li>Montreal</li></ul>
 </div>
 
 <main id="main">
-
 <section id="artist">
   <div class="wrap">
     <div class="artist">
@@ -288,12 +58,12 @@ span.rv{display:inline-block}
         <h2>Creation, close to <em>destruction.</em></h2>
       </div>
       <div class="rv">
-        <p class="lead">Viktor Mitic is a Serbian-born Canadian painter and sculptor based in Toronto.</p>
-        <p>He grew up in the former Yugoslavia, where national service taught him to handle firearms, and later moved to Canada. He holds a BFA from the University of Toronto and a Fine Arts Diploma from Sheridan College.</p>
-        <p>His practice runs in several directions at once. The Rain Dance paintings are made outdoors and left to the weather. The Art or War paintings are outlined in bullet holes, a way of turning a tool built for harm into one that makes an image. His sculptures are cut from aluminum and finished in car paint.</p>
+        <p class="lead">Viktor Mitic is a Serbian-born Canadian painter and sculptor with studios in Toronto and Sarasota, Florida.</p>
+        <p>He grew up in the former Yugoslavia, where national service taught him to handle firearms, and later moved to Canada. He holds a Bachelor of Fine Art from the University of Toronto and a Fine Arts Diploma from Sheridan College.</p>
+        <p>His practice runs in several directions at once. The Rain Dance paintings are made outdoors and left to the weather. The Art or War paintings are outlined in bullet holes, a way of turning a tool built for harm into one that makes an image. His sculptures range from cut aluminum finished in car paint to stainless steel plated in 24k gold.</p>
         <p>Mitic says the gun works are meant to start a conversation about gun violence, and he leaves the conclusions to the viewer.</p>
-        <a class="more" href="https://artorwar.com/wp-content/uploads/2023/03/Viktor-Mitic_CV.pdf" target="_blank" rel="noopener">Curriculum vitae (PDF)</a>
-        <a class="more" href="https://en.wikipedia.org/wiki/Viktor_Mitic" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="more" href="cv.html">Curriculum vitae</a>
+        <a class="more" href="acquisitions.html">Collector acquisitions</a>
       </div>
     </div>
     <div class="studio rv">
@@ -305,32 +75,8 @@ span.rv{display:inline-block}
 
 <section id="works" style="padding-top:0">
   <div class="wrap">
-    <div class="sec-head rv">
-      <h2>Bodies <em>of work</em></h2>
-      <span class="label">Five series</span>
-    </div>
-    <div class="grid">
-      <a class="card c1 rv" href="https://artorwar.com/hot-art/artwork/rain-dance/" target="_blank" rel="noopener">
-        <img loading="lazy" alt="Rain Dance, painting by Viktor Mitic" src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_14.jpg">
-        <div class="cap"><span class="label">Painting</span><h3>Rain Dance</h3><p>Canvases painted outdoors in showers and storms at sites across North America, with the rain doing part of the work.</p><span class="go">View the series →</span></div>
-      </a>
-      <a class="card c2 rv" href="https://artorwar.com/hot-art/artwork/art/" target="_blank" rel="noopener">
-        <img loading="lazy" alt="Bullet-hole portrait from Art or War by Viktor Mitic" src="https://artorwar.com/wp-content/uploads/2017/11/Viktor_doc-157-1024x1015.jpg">
-        <div class="cap"><span class="label">Bullet-hole paintings</span><h3>Art or War</h3><p>Icons and portraits outlined with live rounds.</p><span class="go">View the series →</span></div>
-      </a>
-      <a class="card c3 rv" href="https://artorwar.com/hot-art/artwork/dealers/" target="_blank" rel="noopener">
-        <img loading="lazy" alt="Portrait from the Dealers series by Viktor Mitic" src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-14Sep09_0047-prnt.jpg">
-        <div class="cap"><span class="label">Ink on gold leaf</span><h3>Dealers</h3><p>Thirty-six portraits of Toronto's art dealers.</p><span class="go">View the series →</span></div>
-      </a>
-      <a class="card c4 rv" href="https://artorwar.com/hot-art/artwork/sculptures/" target="_blank" rel="noopener">
-        <img loading="lazy" alt="Outdoor sculpture by Viktor Mitic" src="https://artorwar.com/wp-content/uploads/2022/09/IMG_20220411_104605-1024x768.jpg">
-        <div class="cap"><span class="label">Sculpture</span><h3>Sculptures &amp; Installations</h3><p>Cut aluminum, car paint, and a school bus.</p><span class="go">View the work →</span></div>
-      </a>
-      <a class="card c5 rv" href="https://artorwar.com/hot-art/artwork/final-render/" target="_blank" rel="noopener">
-        <img loading="lazy" alt="Painted aluminum wall sculpture by Viktor Mitic" src="https://artorwar.com/wp-content/uploads/2017/12/Ax11-1024x683.jpg">
-        <div class="cap"><span class="label">Interactive</span><h3>Sculptures in 3D</h3><p>Five pieces you can click and drag to turn.</p><span class="go">Open the viewer →</span></div>
-      </a>
-    </div>
+    <div class="sec-head rv"><h2>Bodies <em>of work</em></h2><span class="label">Five series</span></div>
+    <div class="grid"><a class="card c1 rv" href="rain-dance.html"><img loading="lazy" alt="Rain Dance, painting by Viktor Mitic" src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_14.jpg"><div class="cap"><span class="label">Painting</span><h3>Rain Dance</h3><p>Canvases painted outdoors in showers and storms at sites across North America, with the rain doing part of the work.</p><span class="go">View the series →</span></div></a><a class="card c2 rv" href="art-or-war.html"><img loading="lazy" alt="Bullet-hole portrait from Art or War by Viktor Mitic" src="https://artorwar.com/wp-content/uploads/2017/11/Viktor_doc-157-1024x1015.jpg"><div class="cap"><span class="label">Bullet-hole paintings</span><h3>Art or War</h3><p>Icons and portraits outlined with live rounds.</p><span class="go">View the series →</span></div></a><a class="card c3 rv" href="dealers.html"><img loading="lazy" alt="Portrait from the Dealers series by Viktor Mitic" src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-14Sep09_0047-prnt.jpg"><div class="cap"><span class="label">Ink on gold leaf</span><h3>Dealers</h3><p>Thirty-six portraits of Toronto's art dealers.</p><span class="go">View the series →</span></div></a><a class="card c4 rv" href="sculptures.html"><img loading="lazy" alt="Outdoor sculpture by Viktor Mitic" src="https://artorwar.com/wp-content/uploads/2022/09/IMG_20220411_104605-1024x768.jpg"><div class="cap"><span class="label">Sculpture</span><h3>Sculptures &amp; Installations</h3><p>Steel, gold, cut aluminum, and a school bus.</p><span class="go">View the work →</span></div></a><a class="card c5 rv" href="sculptures-3d.html"><img loading="lazy" alt="Painted aluminum wall sculpture by Viktor Mitic" src="https://artorwar.com/wp-content/uploads/2017/12/Ax11-1024x683.jpg"><div class="cap"><span class="label">Interactive</span><h3>Sculptures in 3D</h3><p>Five pieces you can click and drag to turn.</p><span class="go">Open the viewer →</span></div></a></div>
   </div>
 </section>
 
@@ -339,7 +85,7 @@ span.rv{display:inline-block}
     <div class="rv">
       <span class="label">Series · Painting</span>
       <h2>Rain <em>Dance</em></h2>
-      <a class="more" href="https://artorwar.com/hot-art/artwork/rain-dance/" target="_blank" rel="noopener">See the full series</a>
+      <a class="more" href="rain-dance.html">See the full series</a>
     </div>
     <div class="rv">
       <p>Every painting in the series was made outside, in the rain. Natural elements mix with traditional painting mediums, so the weather on the day decides part of the picture.</p>
@@ -347,7 +93,7 @@ span.rv{display:inline-block}
     </div>
   </div>
   <span class="label hint rv">Drag or scroll · select to enlarge</span>
-  <div class="strip rv" data-gallery="rain"></div>
+  <div class="strip"><button type="button" data-lb="strip-rain" data-src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_11.jpg" data-alt="Rain Dance, painting by Viktor Mitic" aria-label="Enlarge image 1 of 13"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_11-768x624.jpg" alt="Rain Dance, painting by Viktor Mitic, view 1"></button><button type="button" data-lb="strip-rain" data-src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_13.jpg" data-alt="Rain Dance, painting by Viktor Mitic" aria-label="Enlarge image 2 of 13"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_13-768x613.jpg" alt="Rain Dance, painting by Viktor Mitic, view 2"></button><button type="button" data-lb="strip-rain" data-src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_15.jpg" data-alt="Rain Dance, painting by Viktor Mitic" aria-label="Enlarge image 3 of 13"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_15-768x565.jpg" alt="Rain Dance, painting by Viktor Mitic, view 3"></button><button type="button" data-lb="strip-rain" data-src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_17.jpg" data-alt="Rain Dance, painting by Viktor Mitic" aria-label="Enlarge image 4 of 13"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_17-768x616.jpg" alt="Rain Dance, painting by Viktor Mitic, view 4"></button><button type="button" data-lb="strip-rain" data-src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_19.jpg" data-alt="Rain Dance, painting by Viktor Mitic" aria-label="Enlarge image 5 of 13"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_19-768x595.jpg" alt="Rain Dance, painting by Viktor Mitic, view 5"></button><button type="button" data-lb="strip-rain" data-src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_21.jpg" data-alt="Rain Dance, painting by Viktor Mitic" aria-label="Enlarge image 6 of 13"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-Mitic-Oct-2008_21-768x614.jpg" alt="Rain Dance, painting by Viktor Mitic, view 6"></button><button type="button" class=wide data-lb="strip-rain" data-src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-22jun08-007-web-1.jpg" data-alt="Rain Dance, painting by Viktor Mitic" aria-label="Enlarge image 7 of 13"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/10/Viktor-22jun08-007-web-1-768x323.jpg" alt="Rain Dance, painting by Viktor Mitic, view 7"></button><button type="button" data-lb="strip-rain" data-src="https://artorwar.com/wp-content/uploads/2017/10/61x61-oil-on-canvas-M0002-doc-1024x996.jpg" data-alt="Rain Dance, painting by Viktor Mitic" aria-label="Enlarge image 8 of 13"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/10/61x61-oil-on-canvas-M0002-doc-768x747.jpg" alt="Rain Dance, painting by Viktor Mitic, view 8"></button><button type="button" data-lb="strip-rain" data-src="https://artorwar.com/wp-content/uploads/2017/10/61x61-oil-on-canvas-M0006-doc-1024x1012.jpg" data-alt="Rain Dance, painting by Viktor Mitic" aria-label="Enlarge image 9 of 13"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/10/61x61-oil-on-canvas-M0006-doc-768x759.jpg" alt="Rain Dance, painting by Viktor Mitic, view 9"></button><button type="button" data-lb="strip-rain" data-src="https://artorwar.com/wp-content/uploads/2017/10/61x61-oil-on-canvas-M0010-doc-1024x1024.jpg" data-alt="Rain Dance, painting by Viktor Mitic" aria-label="Enlarge image 10 of 13"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/10/61x61-oil-on-canvas-M0010-doc-768x769.jpg" alt="Rain Dance, painting by Viktor Mitic, view 10"></button><button type="button" data-lb="strip-rain" data-src="https://artorwar.com/wp-content/uploads/2017/10/61x61-oil-on-canvas-M0020-doc-1024x1021.jpg" data-alt="Rain Dance, painting by Viktor Mitic" aria-label="Enlarge image 11 of 13"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/10/61x61-oil-on-canvas-M0020-doc-768x766.jpg" alt="Rain Dance, painting by Viktor Mitic, view 11"></button><button type="button" data-lb="strip-rain" data-src="https://artorwar.com/wp-content/uploads/2017/10/61x61-oil-on-canvas-M0035-doc-1024x1012.jpg" data-alt="Rain Dance, painting by Viktor Mitic" aria-label="Enlarge image 12 of 13"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/10/61x61-oil-on-canvas-M0035-doc-768x759.jpg" alt="Rain Dance, painting by Viktor Mitic, view 12"></button><button type="button" data-lb="strip-rain" data-src="https://artorwar.com/wp-content/uploads/2017/10/61x61-oil-on-canvas-M0045-doc-1024x1022.jpg" data-alt="Rain Dance, painting by Viktor Mitic" aria-label="Enlarge image 13 of 13"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/10/61x61-oil-on-canvas-M0045-doc-768x767.jpg" alt="Rain Dance, painting by Viktor Mitic, view 13"></button></div>
 </section>
 
 <section id="art-or-war">
@@ -356,13 +102,13 @@ span.rv{display:inline-block}
       <span class="label">Series · Bullet-hole paintings</span>
       <h2>Art <em>or War</em></h2>
       <p>Mitic paints the image, then outlines it with gunfire. His subjects include Gandhi, John F. Kennedy and John Lennon, people whose lives were ended by guns, alongside Jesus, Marilyn Monroe and Chairman Mao.</p>
-      <p><em>Hole Jesus</em> (2008) was made with .22-calibre rounds. <em>Blasted Beaverbrook</em> (2009) was commissioned by the Beaverbrook Art Gallery in New Brunswick. <em>Blasted Guernica</em>, his answer to Picasso, is in the collection of the Remington Contemporary Art Gallery in Markham, Ontario.</p>
-      <a class="more" href="https://artorwar.com/hot-art/artwork/art/" target="_blank" rel="noopener">See the full series</a>
+      <p><em>Hole Jesus</em> (2008) was made with .22-calibre rounds. <em>Blasted Beaverbrook</em> (2009) was commissioned by the Beaverbrook Art Gallery in New Brunswick. <em>Blasted Guernica</em>, his answer to Picasso, is on permanent view at the Remington Contemporary Art Museum in Markham, Ontario.</p>
+      <a class="more" href="art-or-war.html">See the full series</a>
     </div>
     <blockquote class="quote rv">“Guns were made to destroy, but can they be used to create something beautiful?”<cite>Viktor Mitic</cite></blockquote>
   </div>
   <span class="label hint rv">Drag or scroll · select to enlarge</span>
-  <div class="strip rv" data-gallery="war"></div>
+  <div class="strip"><button type="button" class=wide data-lb="strip-war" data-src="https://artorwar.com/wp-content/uploads/2017/11/Viktor_doc-204-1024x781.jpg" data-alt="Bullet-hole painting from Art or War by Viktor Mitic" aria-label="Enlarge image 1 of 8"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/11/Viktor_doc-204-768x585.jpg" alt="Bullet-hole painting from Art or War by Viktor Mitic, view 1"></button><button type="button" data-lb="strip-war" data-src="https://artorwar.com/wp-content/uploads/2017/11/Viktor_doc-157-1024x1015.jpg" data-alt="Bullet-hole painting from Art or War by Viktor Mitic" aria-label="Enlarge image 2 of 8"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/11/Viktor_doc-157-768x761.jpg" alt="Bullet-hole painting from Art or War by Viktor Mitic, view 2"></button><button type="button" class=wide data-lb="strip-war" data-src="https://artorwar.com/wp-content/uploads/2017/11/Viktor_doc-122-1024x786.jpg" data-alt="Bullet-hole painting from Art or War by Viktor Mitic" aria-label="Enlarge image 3 of 8"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/11/Viktor_doc-122-768x589.jpg" alt="Bullet-hole painting from Art or War by Viktor Mitic, view 3"></button><button type="button" data-lb="strip-war" data-src="https://artorwar.com/wp-content/uploads/2017/11/IMG_3325-998x1024.jpg" data-alt="Bullet-hole painting from Art or War by Viktor Mitic" aria-label="Enlarge image 4 of 8"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/11/IMG_3325-768x788.jpg" alt="Bullet-hole painting from Art or War by Viktor Mitic, view 4"></button><button type="button" data-lb="strip-war" data-src="https://artorwar.com/wp-content/uploads/2017/11/Viktor_doc-10-1024x904.jpg" data-alt="Bullet-hole painting from Art or War by Viktor Mitic" aria-label="Enlarge image 5 of 8"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/11/Viktor_doc-10-768x678.jpg" alt="Bullet-hole painting from Art or War by Viktor Mitic, view 5"></button><button type="button" data-lb="strip-war" data-src="https://artorwar.com/wp-content/uploads/2017/11/MiticViktor-1024x1018.jpg" data-alt="Bullet-hole painting from Art or War by Viktor Mitic" aria-label="Enlarge image 6 of 8"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/11/MiticViktor-768x764.jpg" alt="Bullet-hole painting from Art or War by Viktor Mitic, view 6"></button><button type="button" class=wide data-lb="strip-war" data-src="https://artorwar.com/wp-content/uploads/2017/11/Triptych-V1-dark-grey-1024x680.jpg" data-alt="Bullet-hole painting from Art or War by Viktor Mitic" aria-label="Enlarge image 7 of 8"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/11/Triptych-V1-dark-grey-768x510.jpg" alt="Bullet-hole painting from Art or War by Viktor Mitic, view 7"></button><button type="button" data-lb="strip-war" data-src="https://artorwar.com/wp-content/uploads/2017/11/Beiber-mstr-711x1024.jpg" data-alt="Bullet-hole painting from Art or War by Viktor Mitic" aria-label="Enlarge image 8 of 8"><img loading="lazy" src="https://artorwar.com/wp-content/uploads/2017/11/Beiber-mstr-768x1106.jpg" alt="Bullet-hole painting from Art or War by Viktor Mitic, view 8"></button></div>
 </section>
 
 <section class="banner" id="incident" aria-labelledby="incident-h">
@@ -370,10 +116,10 @@ span.rv{display:inline-block}
   <div class="wrap rv">
     <span class="label">Installation · 2013</span>
     <h2 id="incident-h">Incident</h2>
-    <p>A school bus riddled with bullet holes, shown in Toronto and in Washington, D.C., where it arrived as a rolling exhibit against gun violence. It is now in the permanent collection of Artisan Works in Rochester, New York.</p>
+    <p>A school bus riddled with bullet holes. It premiered at Nuit Blanche in Toronto and toured to Washington, D.C. in April 2013, at the height of the U.S. gun debates. It is now in the permanent collection of Artisan Works in Rochester, New York.</p>
     <div class="row">
-      <a class="more" href="https://www.washingtonpost.com/local/bullet-riddled-school-bus-debuts-in-dc-as-a-rolling-art-exhibit/2013/04/07/cb06bb2c-9fa9-11e2-9c03-6952ff305f35_story.html" target="_blank" rel="noopener">The Washington Post</a>
-      <a class="more" href="https://www.huffpost.com/entry/art-against-guns-viktor-mitic-fights-back-with-bullet-riddled-bus-artwork_n_3036727" target="_blank" rel="noopener">HuffPost</a>
+      <a class="more" href="sculptures.html#incident">About the work</a>
+      <a class="more" href="press.html">Press and video</a>
     </div>
   </div>
 </section>
@@ -384,115 +130,41 @@ span.rv{display:inline-block}
       <div class="rv">
         <span class="label">Sculpture &amp; installation</span>
         <h2>Shape <em>in space</em></h2>
-        <a class="more" href="https://artorwar.com/hot-art/artwork/sculptures/" target="_blank" rel="noopener">All sculptures</a>
+        <a class="more" href="sculptures.html">All sculptures</a>
       </div>
       <div class="rv">
-        <p>The sculptures are cut from aluminum and sprayed in car paint, with a post-Pop energy. Shapes are layered at different depths so that a piece reads as a drawing in space.</p>
-        <p>The critic John K. Grande has written on the series. Smaller works grow from paint drips in the studio. The largest, <em>Hypervelocity Asteroid</em> (2016), measures 22 × 3 × 10 feet and was acquired by the Elizabeth Collection in Rochester, New York.</p>
+        <p>The early sculptures are cut from aluminum and sprayed in car paint, with a post-Pop energy. Recent pieces grow from paint splatters found on the studio floor and become totems in stainless steel, bronze and 24k gold, some of them 16 feet tall.</p>
+        <p>They now stand in public and private collections from Port Moody, British Columbia, to Doha and Colombo.</p>
       </div>
     </div>
-    <div class="places">
-      <a class="place rv" href="https://artorwar.com/2023-media/" target="_blank" rel="noopener">
-        <img loading="lazy" alt="Heartland, sculpture by Viktor Mitic in Port Moody, British Columbia" src="https://artorwar.com/wp-content/uploads/2023/02/Heartland-Port-Moody-681x1024.jpg">
-        <div class="cap"><h3>Heartland</h3><span class="where">Port Moody, British Columbia</span></div>
-      </a>
-      <a class="place rv" href="https://artorwar.com/2023-media/" target="_blank" rel="noopener">
-        <img loading="lazy" alt="Fragment, sculpture by Viktor Mitic in Doha, Qatar" src="https://artorwar.com/wp-content/uploads/2023/02/fragment-doha-768x1024.jpg">
-        <div class="cap"><h3>Fragment</h3><span class="where">Doha, Qatar</span></div>
-      </a>
-      <a class="place rv" href="https://artorwar.com/2023-media/" target="_blank" rel="noopener">
-        <img loading="lazy" alt="Celestial, sculpture by Viktor Mitic in Sonoma" src="https://artorwar.com/wp-content/uploads/2023/02/CELESTIAL-IN-SONOMA-HOME-ON-HILLSIDE-913x1024.jpeg">
-        <div class="cap"><h3>Celestial</h3><span class="where">Sonoma</span></div>
-      </a>
-      <a class="place rv" href="https://artorwar.com/2023-media/" target="_blank" rel="noopener">
-        <img loading="lazy" alt="Gold Totem, sculpture by Viktor Mitic" src="https://artorwar.com/wp-content/uploads/2023/02/red-gold-gold-totem-768x1024.jpg">
-        <div class="cap"><h3>Gold Totem</h3><span class="where">Collector acquisition</span></div>
-      </a>
-    </div>
-    <div class="chips rv">
-      <span class="label">Turn them in 3D</span>
-      <a class="chip" href="https://artorwar.com/hot-art/artwork/final-render/s1/" target="_blank" rel="noopener">SC 1</a>
-      <a class="chip" href="https://artorwar.com/hot-art/artwork/final-render/sc-2/" target="_blank" rel="noopener">SC 2</a>
-      <a class="chip" href="https://artorwar.com/hot-art/artwork/final-render/sc-3/" target="_blank" rel="noopener">SC 3</a>
-      <a class="chip" href="https://artorwar.com/hot-art/artwork/final-render/sc-4/" target="_blank" rel="noopener">SC 4</a>
-      <a class="chip" href="https://artorwar.com/hot-art/artwork/final-render/sc-5/" target="_blank" rel="noopener">SC 5</a>
-    </div>
+    <div class="places"><a class="place rv" href="acquisitions.html"><img loading="lazy" alt="Heartland, sculpture by Viktor Mitic, Port Moody, British Columbia" src="https://artorwar.com/wp-content/uploads/2023/02/Heartland-Port-Moody-768x1154.jpg"><div class="cap"><h3>Heartland</h3><span class="where">Port Moody, British Columbia</span></div></a><a class="place rv" href="acquisitions.html"><img loading="lazy" alt="Fragment, sculpture by Viktor Mitic, Doha, Qatar" src="https://artorwar.com/wp-content/uploads/2023/02/fragment-doha-768x1024.jpg"><div class="cap"><h3>Fragment</h3><span class="where">Doha, Qatar</span></div></a><a class="place rv" href="acquisitions.html"><img loading="lazy" alt="Celestial, sculpture by Viktor Mitic, Sonoma, California" src="https://artorwar.com/wp-content/uploads/2023/02/CELESTIAL-IN-SONOMA-HOME-ON-HILLSIDE-768x861.jpeg"><div class="cap"><h3>Celestial</h3><span class="where">Sonoma, California</span></div></a><a class="place rv" href="acquisitions.html"><img loading="lazy" alt="Gold Totem, sculpture by Viktor Mitic, Englewood, New Jersey" src="https://artorwar.com/wp-content/uploads/2023/02/red-gold-gold-totem-768x1024.jpg"><div class="cap"><h3>Gold Totem</h3><span class="where">Englewood, New Jersey</span></div></a></div>
+    <div class="chips rv"><span class="label">Turn them in 3D</span><a class="chip" href="sculptures-3d.html#sc1">SC 1</a><a class="chip" href="sculptures-3d.html#sc2">SC 2</a><a class="chip" href="sculptures-3d.html#sc3">SC 3</a><a class="chip" href="sculptures-3d.html#sc4">SC 4</a><a class="chip" href="sculptures-3d.html#sc5">SC 5</a></div>
   </div>
 </section>
 
 <section class="feature" id="timeline">
   <div class="wrap">
-    <div class="sec-head rv">
-      <h2>Selected <em>history</em></h2>
-      <span class="label">1995 — 2017</span>
-    </div>
-    <ul class="timeline">
-      <li class="rv"><span class="yr">1995</span><p>Paints a portrait of Prime Minister Jean Chrétien, unveiled at the prime minister's office in Ottawa.</p></li>
-      <li class="rv"><span class="yr">2008</span><p><em>Hole Jesus</em> is shown at Trias Gallery in Toronto. <em>Galaxy</em> is shown at Muramatsu Gallery in Tokyo.</p></li>
-      <li class="rv"><span class="yr">2009</span><p>The Beaverbrook Art Gallery commissions <em>Blasted Beaverbrook</em>. <em>Dealers</em>, 36 portraits of Toronto's art dealers, opens at Odon Wagner Contemporary.</p></li>
-      <li class="rv"><span class="yr">2010</span><p><em>Art or War</em> opens at Gallery Moos in Toronto, with a book and a short film of the same name.</p></li>
-      <li class="rv"><span class="yr">2011</span><p>Fourfront Editions publishes <em>Rain Dance</em> as a book and film.</p></li>
-      <li class="rv"><span class="yr">2013</span><p><em>Incident</em> is installed in Washington, D.C.</p></li>
-      <li class="rv"><span class="yr">2014</span><p>The documentary <em>Gun Porn</em>, on how the bullet paintings are made, screens at Hot Docs.</p></li>
-      <li class="rv"><span class="yr">2015</span><p>Artisan Works in Rochester, New York, exhibits the 58 works it acquired.</p></li>
-      <li class="rv"><span class="yr">2016</span><p><em>Blasted Guernica</em> goes on show in the permanent collection of the Remington Contemporary Art Gallery in Markham, Ontario.</p></li>
-      <li class="rv"><span class="yr">2017</span><p>The Elizabeth Collection in Rochester acquires <em>Hypervelocity Asteroid</em>.</p></li>
-    </ul>
+    <div class="sec-head rv"><h2>Selected <em>history</em></h2><a class="more" href="cv.html">Full CV</a></div>
+    <ul class="timeline"><li class="rv"><span class="yr">1995</span><p>Paints a portrait of Prime Minister Jean Chrétien, unveiled at the prime minister's office in Ottawa.</p></li><li class="rv"><span class="yr">2008</span><p><em>Hole Jesus</em> is shown at Trias Gallery in Toronto. <em>Galaxy</em> is shown at Muramatsu Gallery in Tokyo.</p></li><li class="rv"><span class="yr">2009</span><p>The Beaverbrook Art Gallery commissions <em>Blasted Beaverbrook</em>. <em>Dealers</em>, 36 portraits of Toronto's art dealers, opens at Odon Wagner Contemporary.</p></li><li class="rv"><span class="yr">2010</span><p><em>Art or War</em> opens at Gallery Moos in Toronto, with a book and a short film. The work travels to the Armory Show in New York and Art Chicago.</p></li><li class="rv"><span class="yr">2011</span><p>Fourfront Editions publishes <em>Rain Dance</em> as a book and film.</p></li><li class="rv"><span class="yr">2013</span><p><em>Incident</em> tours to Washington, D.C. during the U.S. gun debates.</p></li><li class="rv"><span class="yr">2014</span><p>The documentary <em>Gun Porn</em>, on how the bullet paintings are made, screens at Hot Docs.</p></li><li class="rv"><span class="yr">2015</span><p>Artisan Works in Rochester, New York, exhibits the 58 works it acquired. <em>Blasted Guernica</em> goes on permanent view in Markham, Ontario.</p></li><li class="rv"><span class="yr">2018</span><p><em>Lyric Star</em> and <em>The Music Garage</em> are installed at the Marriott Hotel in Markham. The Biggs Museum of American Art adds a work to its collection.</p></li><li class="rv"><span class="yr">2021</span><p><em>Heartland</em> becomes public art in Port Moody, British Columbia.</p></li><li class="rv"><span class="yr">2023</span><p>Sculptures enter private collections in Sonoma and New Jersey. A second studio is working in Sarasota, Florida.</p></li></ul>
   </div>
 </section>
 
 <section id="books">
   <div class="wrap">
-    <div class="sec-head rv">
-      <h2>Books <em>&amp; films</em></h2>
-      <a class="more" href="https://artorwar.com/publications/books/" target="_blank" rel="noopener">All publications</a>
-    </div>
+    <div class="sec-head rv"><h2>Books <em>&amp; films</em></h2><a class="more" href="books.html">All publications</a></div>
     <div class="books rv">
-      <a class="book" href="https://www.amazon.ca/Dealers-Viktor-Mitic/dp/1926639146" target="_blank" rel="noopener">
-        <span class="n">01 — 2009</span><h3>Dealers</h3>
-        <p>The 36 dealer portraits, with an introduction by Gary Michael Dault. Tightrope Books.</p>
-        <span class="more" aria-hidden="true">Find the book</span>
-      </a>
-      <a class="book" href="https://www.amazon.ca/Art-War-Paintings-Viktor-Mitic/dp/1926639154" target="_blank" rel="noopener">
-        <span class="n">02 — 2010</span><h3>Art or War</h3>
-        <p>The bullet-hole paintings, with an introduction by Jim Nason. Tightrope Books.</p>
-        <span class="more" aria-hidden="true">Find the book</span>
-      </a>
-      <a class="book" href="https://www.amazon.com/Rain-Dance-DVD-Viktor-Mitic/dp/1926802667" target="_blank" rel="noopener">
-        <span class="n">03 — 2011</span><h3>Rain Dance</h3>
-        <p>Reproductions of the rain paintings, published with a DVD. Fourfront Editions.</p>
-        <span class="more" aria-hidden="true">Find the book</span>
-      </a>
-    </div>
-    <div class="films rv">
-      <h3>On film</h3>
-      <ul>
-        <li><span class="t">Art or War</span><span class="d">Laurie Kwasnik · 12 min</span><span class="y">2010</span></li>
-        <li><span class="t">Rain Dance</span><span class="d">Brahm Rosensweig · 14 min · Fourfront Editions</span><span class="y">2011</span></li>
-        <li><span class="t">Gun Porn</span><span class="d">Brahm Rosensweig · 11 min · Hot Docs</span><span class="y">2014</span></li>
-        <li><span class="t">Point Blank: Art or War</span><span class="d">Nora Stankovic · 6 min · Cannes</span><span class="y">2016</span></li>
-      </ul>
+      <a class="book" href="books.html#dealers"><span class="n">01 · 2009</span><h3>Dealers</h3><p>The 36 dealer portraits, with an introduction by Gary Michael Dault. Tightrope Books.</p><span class="more" aria-hidden="true">About the book</span></a>
+      <a class="book" href="books.html#art-or-war"><span class="n">02 · 2010</span><h3>Art or War</h3><p>The bullet-hole paintings, with an introduction by Jim Nason. Tightrope Books.</p><span class="more" aria-hidden="true">About the book</span></a>
+      <a class="book" href="books.html#rain-dance"><span class="n">03 · 2011</span><h3>Rain Dance</h3><p>Reproductions of the rain paintings, published with a DVD. Fourfront Editions.</p><span class="more" aria-hidden="true">About the book</span></a>
     </div>
   </div>
 </section>
 
 <section class="feature" id="press">
   <div class="wrap">
-    <div class="sec-head rv">
-      <h2>In the <em>press</em></h2>
-      <span class="label">Selected coverage</span>
-    </div>
-    <ul class="press rv">
-      <li><a href="https://www.theglobeandmail.com/arts/viktor-mitic-from-the-barrel-of-a-gun/article4213687/" target="_blank" rel="noopener"><span class="o">The Globe and Mail</span><span class="s">From the barrel of a gun</span><span class="r">Read ↗</span></a></li>
-      <li><a href="https://www.cbc.ca/news/entertainment/bullet-holes-stud-viktor-mitic-s-pop-art-1.1403936" target="_blank" rel="noopener"><span class="o">CBC News</span><span class="s">Bullet holes and pop art</span><span class="r">Read ↗</span></a></li>
-      <li><a href="https://www.washingtonpost.com/local/bullet-riddled-school-bus-debuts-in-dc-as-a-rolling-art-exhibit/2013/04/07/cb06bb2c-9fa9-11e2-9c03-6952ff305f35_story.html" target="_blank" rel="noopener"><span class="o">The Washington Post</span><span class="s">Incident arrives in Washington, D.C. · 2013</span><span class="r">Read ↗</span></a></li>
-      <li><a href="https://www.huffpost.com/entry/art-against-guns-viktor-mitic-fights-back-with-bullet-riddled-bus-artwork_n_3036727" target="_blank" rel="noopener"><span class="o">HuffPost</span><span class="s">The bullet-riddled bus · 2013</span><span class="r">Read ↗</span></a></li>
-      <li><a href="https://www.thestar.com/news/gta/bullet-riddled-painting-of-justin-bieber-missing-after-tiff-debut/article_a278af2e-7416-57b7-a84a-3ac78af6173c.html" target="_blank" rel="noopener"><span class="o">Toronto Star</span><span class="s">The Bieber painting goes missing after TIFF · 2017</span><span class="r">Read ↗</span></a></li>
-      <li><a href="https://torontosun.com/2017/09/21/bullet-riddled-bieber-painting-returned-to-artist" target="_blank" rel="noopener"><span class="o">Toronto Sun</span><span class="s">The Bieber painting is returned · 2017</span><span class="r">Read ↗</span></a></li>
-      <li><a href="https://www.dailymail.com/news/article-1337552/Viktor-Mitic-paints-pictures-gun-victims-John-Lennon-JFK-Gandhi-bullet-holes.html" target="_blank" rel="noopener"><span class="o">Daily Mail</span><span class="s">Portraits of Lennon, JFK and Gandhi</span><span class="r">Read ↗</span></a></li>
-      <li><a href="https://www.srqmagazine.com/srq-daily/2014-08-22/447_Gone-Shooting-with-Viktor-Mitic" target="_blank" rel="noopener"><span class="o">SRQ Magazine</span><span class="s">Gone shooting with Viktor Mitic · 2014</span><span class="r">Read ↗</span></a></li>
-    </ul>
-    <div class="press-foot rv"><a class="more" href="https://artorwar.com/publications/press-videos/" target="_blank" rel="noopener">Full media coverage</a></div>
+    <div class="sec-head rv"><h2>In the <em>press</em></h2><span class="label">Selected coverage</span></div>
+    <ul class="press rv"><li><a href="https://www.theglobeandmail.com/arts/viktor-mitic-from-the-barrel-of-a-gun/article4213687/" target="_blank" rel="noopener"><span class="o">The Globe and Mail</span><span class="s">From the barrel of a gun</span><span class="r">Read ↗</span></a></li><li><a href="https://www.cbc.ca/news/entertainment/bullet-holes-stud-viktor-mitic-s-pop-art-1.1403936" target="_blank" rel="noopener"><span class="o">CBC News</span><span class="s">Bullet holes and pop art</span><span class="r">Read ↗</span></a></li><li><a href="https://www.washingtonpost.com/local/bullet-riddled-school-bus-debuts-in-dc-as-a-rolling-art-exhibit/2013/04/07/cb06bb2c-9fa9-11e2-9c03-6952ff305f35_story.html" target="_blank" rel="noopener"><span class="o">The Washington Post</span><span class="s">Incident arrives in Washington, D.C. · 2013</span><span class="r">Read ↗</span></a></li><li><a href="https://www.huffpost.com/entry/art-against-guns-viktor-mitic-fights-back-with-bullet-riddled-bus-artwork_n_3036727" target="_blank" rel="noopener"><span class="o">HuffPost</span><span class="s">The bullet-riddled bus · 2013</span><span class="r">Read ↗</span></a></li><li><a href="https://www.thestar.com/news/gta/bullet-riddled-painting-of-justin-bieber-missing-after-tiff-debut/article_a278af2e-7416-57b7-a84a-3ac78af6173c.html" target="_blank" rel="noopener"><span class="o">Toronto Star</span><span class="s">The Bieber painting goes missing after TIFF · 2017</span><span class="r">Read ↗</span></a></li></ul>
+    <div class="press-foot rv"><a class="more" href="press.html">All press and video</a></div>
   </div>
 </section>
 
@@ -500,168 +172,50 @@ span.rv{display:inline-block}
   <div class="wrap">
     <span class="label rv">Collect</span>
     <h2 class="rv">Bring the storm home</h2>
-    <p class="rv">Original paintings and sculptures are available to collectors and dealers. Write to the studio:</p>
-    <div class="rv"><a class="mail" href="mailto:info@artorwar.com?subject=Enquiry%20about%20available%20work">info@artorwar.com</a></div>
-    <div class="hero-actions rv">
-      <a class="btn fill" href="https://artorwar.com/available-work/" target="_blank" rel="noopener">View available work</a>
-      <a class="btn ghost" href="mailto:info@artorwar.com?subject=Enquiry%20about%20available%20work">Email an enquiry</a>
+    <p class="rv">Original paintings and sculptures are available to collectors and dealers.</p>
+    <div class="actions rv" style="margin-top:26px">
+      <a class="btn fill" href="available-work.html">View available work</a>
+      <a class="btn ghost" href="contact.html">Enquire</a>
     </div>
     <div class="tiles rv">
-      <a href="https://artorwar.com/2023-media/" target="_blank" rel="noopener"><span class="label">Media</span><h3>Release images</h3><span class="sub">Collector acquisitions, for media use</span></a>
-      <a href="https://artorwar.com/wp-content/uploads/2023/03/Viktor-Mitic_CV.pdf" target="_blank" rel="noopener"><span class="label">Download</span><h3>Curriculum vitae</h3><span class="sub">PDF</span></a>
-      <a href="https://artorwar.com/hot-art/artwork/dealers/" target="_blank" rel="noopener"><span class="label">Trade</span><h3>Dealers</h3><span class="sub">The series and the galleries</span></a>
+      <a href="acquisitions.html"><span class="label">News</span><h3>Collector acquisitions</h3><span class="sub">Sonoma, Port Moody, New Jersey</span></a>
+      <a href="cv.html"><span class="label">About</span><h3>Curriculum vitae</h3><span class="sub">Public art, collections, shows</span></a>
+      <a href="press.html"><span class="label">Media</span><h3>Press &amp; video</h3><span class="sub">Articles and television</span></a>
     </div>
   </div>
 </section>
 </main>
-
 <footer>
   <div class="wrap">
     <div class="foot">
       <div>
-        <a class="brand" href="#top">Art or War</a>
-        <p style="max-width:300px;color:var(--muted)">Viktor Mitic. Painting, sculpture and installation. Toronto.</p>
+        <a class="brand" href="index.html">Art or War</a>
+        <p style="max-width:300px;color:var(--muted)">Viktor Mitic. Painting, sculpture and installation. Toronto and Sarasota.</p>
       </div>
-      <div>
-        <h3>Works</h3>
-        <ul>
-          <li><a href="https://artorwar.com/hot-art/artwork/rain-dance/" target="_blank" rel="noopener">Rain Dance</a></li>
-          <li><a href="https://artorwar.com/hot-art/artwork/art/" target="_blank" rel="noopener">Art or War</a></li>
-          <li><a href="https://artorwar.com/hot-art/artwork/dealers/" target="_blank" rel="noopener">Dealers</a></li>
-          <li><a href="https://artorwar.com/hot-art/artwork/sculptures/" target="_blank" rel="noopener">Sculptures &amp; installations</a></li>
-          <li><a href="https://artorwar.com/hot-art/artwork/final-render/" target="_blank" rel="noopener">Sculptures in 3D</a></li>
-        </ul>
-      </div>
-      <div>
-        <h3>Publications</h3>
-        <ul>
-          <li><a href="https://artorwar.com/publications/books/" target="_blank" rel="noopener">Books</a></li>
-          <li><a href="https://artorwar.com/publications/press-videos/" target="_blank" rel="noopener">Media coverage</a></li>
-          <li><a href="https://artorwar.com/2023-media/" target="_blank" rel="noopener">Release images</a></li>
-          <li><a href="https://artorwar.com/wp-content/uploads/2023/03/Viktor-Mitic_CV.pdf" target="_blank" rel="noopener">CV (PDF)</a></li>
-        </ul>
-      </div>
-      <div>
-        <h3>Contact</h3>
-        <ul>
-          <li><a href="mailto:info@artorwar.com">info@artorwar.com</a></li>
-          <li><a href="https://artorwar.com/available-work/" target="_blank" rel="noopener">Available work</a></li>
-          <li><a href="https://artorwar.com/" target="_blank" rel="noopener">artorwar.com</a></li>
-        </ul>
-      </div>
+      <div><h3>Works</h3><ul><li><a href="rain-dance.html">Rain Dance</a></li><li><a href="art-or-war.html">Art or War</a></li><li><a href="dealers.html">Dealers</a></li><li><a href="sculptures.html">Sculptures &amp; installations</a></li><li><a href="sculptures-3d.html">Sculptures in 3D</a></li><li><a href="available-work.html">Available work</a></li></ul></div>
+      <div><h3>Read</h3><ul>
+        <li><a href="press.html">Press &amp; video</a></li>
+        <li><a href="books.html">Books &amp; films</a></li>
+        <li><a href="cv.html">Curriculum vitae</a></li>
+        <li><a href="acquisitions.html">Collector acquisitions</a></li>
+      </ul></div>
+      <div><h3>Contact</h3><ul>
+        <li><a href="contact.html">Enquire</a></li>
+        <li><a href="mailto:info@artorwar.com">info@artorwar.com</a></li>
+      </ul></div>
     </div>
-    <div class="legal">
-      <span>© 2026 artorwar.com. All rights reserved.</span>
-      <a href="#top">Back to top ↑</a>
-    </div>
+    <div class="legal"><span>© 2026 Viktor Mitic. All rights reserved.</span><a href="#top">Back to top ↑</a></div>
   </div>
 </footer>
-
-<dialog id="lb" aria-label="Image viewer">
+<dialog id="lb" class="lbox" aria-label="Image viewer">
   <div class="lb">
-    <button class="x" aria-label="Close">×</button>
-    <button class="p" aria-label="Previous image">‹</button>
-    <img id="lbImg" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
-    <button class="n" aria-label="Next image">›</button>
+    <button class="x" type="button" aria-label="Close">×</button>
+    <button class="p" type="button" aria-label="Previous image">‹</button>
+    <img alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+    <div class="meta"><strong></strong><span></span><a class="more" href="contact.html" hidden>Enquire about this work</a></div>
+    <button class="n" type="button" aria-label="Next image">›</button>
   </div>
 </dialog>
-
-<script>
-(()=>{
-  const U='https://artorwar.com/wp-content/uploads/';
-  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  const FALLBACK="data:image/svg+xml;utf8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="#1a1612"/><text x="200" y="205" fill="#a39a8d" font-family="Georgia" font-size="16" text-anchor="middle">Image unavailable</text></svg>');
-
-  /* image fallback */
-  document.addEventListener('error',e=>{const t=e.target;if(t.tagName==='IMG'&&t.src!==FALLBACK)t.src=FALLBACK},true);
-
-  /* screen-reader cue on links that open a new tab */
-  document.querySelectorAll('a[target=_blank]').forEach(a=>{const s=document.createElement('span');s.className='sr';s.textContent=' (opens in a new tab)';a.appendChild(s)});
-
-  /* nav */
-  const nav=document.getElementById('nav'),burger=document.getElementById('burger'),links=document.getElementById('links');
-  const onScroll=()=>nav.classList.toggle('solid',scrollY>60);
-  addEventListener('scroll',onScroll,{passive:true});onScroll();
-  const closeMenu=()=>{links.classList.remove('open');burger.setAttribute('aria-expanded','false')};
-  burger.onclick=()=>{const o=links.classList.toggle('open');burger.setAttribute('aria-expanded',o)};
-  links.addEventListener('click',e=>{if(e.target.closest('a'))closeMenu()});
-  addEventListener('keydown',e=>{if(e.key==='Escape'&&links.classList.contains('open')){closeMenu();burger.focus()}});
-  document.addEventListener('click',e=>{if(links.classList.contains('open')&&!nav.contains(e.target))closeMenu()});
-
-  /* reveal */
-  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});
-  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
-
-  /* galleries */
-  const G={
-    rain:{alt:'Rain Dance, painting by Viktor Mitic',items:[
-      ...[11,13,15,17,19,21].map(n=>['2017/10/Viktor-Mitic-Oct-2008_'+n+'.jpg']),
-      ['2017/10/Viktor-22jun08-007-web-1.jpg','wide'],
-      ...['02','06','10','20','35','45'].map(n=>['2017/10/61x61-oil-on-canvas-M00'+n+'-doc.jpg'])]},
-    war:{alt:'Bullet-hole painting from Art or War by Viktor Mitic',items:[
-      ['2017/11/Viktor_doc-204-1024x781.jpg','wide'],['2017/11/Viktor_doc-157-1024x1015.jpg'],
-      ['2017/11/Viktor_doc-122-1024x786.jpg','wide'],['2017/11/IMG_3325-998x1024.jpg'],
-      ['2017/11/Viktor_doc-10-1024x904.jpg'],['2017/11/MiticViktor-1024x1018.jpg'],
-      ['2017/11/Triptych-V1-dark-grey-1024x680.jpg','wide'],['2017/11/Beiber-mstr-711x1024.jpg']]}
-  };
-  const lb=document.getElementById('lb'),lbImg=document.getElementById('lbImg'),BLANK=lbImg.src;
-  let cur=0,set=G.rain,opener=null;
-  const show=i=>{cur=(i+set.items.length)%set.items.length;lbImg.src=U+set.items[cur][0];lbImg.alt=set.alt+', view '+(cur+1)};
-  const openLb=(g,i)=>{set=g;opener=document.activeElement;show(i);document.documentElement.style.overflow='hidden';lb.showModal()};
-  lb.querySelector('.x').onclick=()=>lb.close();
-  lb.querySelector('.p').onclick=()=>show(cur-1);
-  lb.querySelector('.n').onclick=()=>show(cur+1);
-  lb.addEventListener('click',e=>{if(e.target===lb||e.target.classList.contains('lb'))lb.close()});
-  lb.addEventListener('close',()=>{document.documentElement.style.overflow='';lbImg.src=BLANK;opener&&opener.focus()});
-  lb.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')show(cur-1);if(e.key==='ArrowRight')show(cur+1)});
-
-  document.querySelectorAll('.strip').forEach(strip=>{
-    const g=G[strip.dataset.gallery];
-    g.items.forEach(([file,cls],i)=>{
-      const b=document.createElement('button');b.type='button';if(cls)b.className=cls;
-      b.setAttribute('aria-label','Enlarge image '+(i+1)+' of '+g.items.length);
-      const im=new Image();im.loading='lazy';im.draggable=false;im.alt=g.alt+', view '+(i+1);im.src=U+file;
-      b.appendChild(im);b.onclick=()=>openLb(g,i);strip.appendChild(b);
-    });
-    /* drag to scroll with a mouse */
-    let down=false,sx=0,sl=0,moved=false;
-    strip.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||e.button!==0)return;down=true;moved=false;sx=e.clientX;sl=strip.scrollLeft});
-    addEventListener('pointermove',e=>{if(!down)return;const d=e.clientX-sx;if(Math.abs(d)>5){moved=true;strip.style.scrollSnapType='none'}strip.scrollLeft=sl-d});
-    const end=()=>{if(!down)return;down=false;strip.style.scrollSnapType='';setTimeout(()=>moved=false,0)};
-    addEventListener('pointerup',end);addEventListener('pointercancel',end);addEventListener('blur',end);
-    strip.addEventListener('click',e=>{if(moved){e.stopPropagation();e.preventDefault()}},true);
-  });
-
-  /* hero parallax */
-  const hi=document.getElementById('heroImg');
-  if(!reduce)addEventListener('scroll',()=>{if(scrollY<innerHeight)hi.style.translate='0 '+(scrollY*.18)+'px'},{passive:true});
-
-  /* rain */
-  const cv=document.getElementById('rain');
-  if(!reduce){
-    const ctx=cv.getContext('2d');let w=0,h=0,r=1,drops=[],raf=0,last=0;
-    const size=()=>{r=Math.min(devicePixelRatio||1,2);const nw=Math.round(cv.clientWidth*r),nh=Math.round(cv.clientHeight*r);
-      if(nw===w&&Math.abs(nh-h)<120*r)return;w=cv.width=nw;h=cv.height=nh;
-      drops=Array.from({length:Math.min(140,Math.round(cv.clientWidth/9))},()=>({x:Math.random()*w,y:Math.random()*h,l:(10+Math.random()*22)*r,v:(9+Math.random()*10)*r,a:.15+Math.random()*.35}))};
-    size();addEventListener('resize',size);
-    const step=t=>{const k=Math.min((t-(last||t))/16.67,3);last=t;ctx.clearRect(0,0,w,h);ctx.lineWidth=r;
-      for(const d of drops){ctx.strokeStyle='rgba(235,225,205,'+d.a+')';ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x-d.l*.18,d.y+d.l);ctx.stroke();
-        d.y+=d.v*k;d.x-=d.v*.18*k;if(d.y>h){d.y=-d.l;d.x=Math.random()*w+h*.18}}
-      raf=requestAnimationFrame(step)};
-    new IntersectionObserver(([e])=>{cancelAnimationFrame(raf);last=0;if(e.isIntersecting)raf=requestAnimationFrame(step)}).observe(cv);
-  }
-
-  /* cursor ring, fine pointers only */
-  const ring=document.getElementById('ring');
-  if(matchMedia('(hover:hover) and (pointer:fine)').matches&&!reduce){
-    let x=0,y=0,tx=0,ty=0,run=false,first=true;
-    const loop=()=>{x+=(tx-x)*.18;y+=(ty-y)*.18;ring.style.transform='translate('+x+'px,'+y+'px)';
-      if(Math.abs(tx-x)+Math.abs(ty-y)>.1)requestAnimationFrame(loop);else run=false};
-    addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY;if(first){x=tx;y=ty;first=false}ring.classList.add('on');if(!run){run=true;requestAnimationFrame(loop)}},{passive:true});
-    document.documentElement.addEventListener('mouseleave',()=>ring.classList.remove('on'));
-    document.addEventListener('mouseover',e=>ring.classList.toggle('big',!!e.target.closest('a,button')));
-  }
-})();
-</script>
+<script src="assets/site.js" defer></script>
 </body>
 </html>
