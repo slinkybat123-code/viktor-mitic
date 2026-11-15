@@ -34,15 +34,17 @@
     <ol class="crumbs" aria-label="Breadcrumb"><li><a href="index.html">Home</a></li><li><a href="index.html#works">Works</a></li><li>Sculptures in 3D</li></ol>
     <span class="label">Interactive</span>
     <h1>Click &amp; Drag</h1>
-    <p class="intro">Five sculptures you can turn. Drag across the image to rotate it.</p>
+    <p class="intro">Five sculptures you can turn. Drag across the image to rotate it, up and down to tilt it.</p>
   </div>
 </header>
 <main id="main">
 <section class="tight" style="padding-top:0">
   <div class="wrap">
-    <div class="tabs" role="group" aria-label="Choose a sculpture"><button class="chip" type="button" data-id="sc1" data-name="Sculpture 1" data-src="https://artorwar.com/wp-content/themes/customizr/final%20render_XR.29.html" aria-pressed="false">SC 1</button><button class="chip" type="button" data-id="sc2" data-name="Sculpture 2" data-src="https://artorwar.com/wp-content/themes/customizr/Sculpt%202_XR.71.html" aria-pressed="false">SC 2</button><button class="chip" type="button" data-id="sc3" data-name="Gold Top" data-src="https://artorwar.com/wp-content/themes/customizr/Gold%20top-colored_XR.39.html" aria-pressed="false">SC 3</button><button class="chip" type="button" data-id="sc4" data-name="Sculpture 4" data-src="https://artorwar.com/wp-content/themes/customizr/Sculpt-3_XR.103.html" aria-pressed="false">SC 4</button><button class="chip" type="button" data-id="sc5" data-name="Sculpture 5" data-src="https://artorwar.com/wp-content/themes/customizr/Model_XR.117.html" aria-pressed="false">SC 5</button></div>
-    <div class="viewer"><iframe id="viewer" title="3D view" loading="lazy" allowfullscreen></iframe></div>
-    <p class="viewer-note"><span id="viewerName"></span> · Drag to rotate · Double-click for full screen · The first load can take a moment.</p>
+    <div class="tabs" role="group" aria-label="Choose a sculpture"><button class="chip" type="button" data-id="sc1" data-name="Sculpture 1" data-folder="final render_XR.29" data-w="886" data-h="582" data-u="20" data-v="10" data-su="10" data-sv="1" aria-pressed="false">SC 1</button><button class="chip" type="button" data-id="sc2" data-name="Sculpture 2" data-folder="Sculpt 2_XR.71" data-w="800" data-h="708" data-u="18" data-v="9" data-su="9" data-sv="0" aria-pressed="false">SC 2</button><button class="chip" type="button" data-id="sc3" data-name="Gold Top" data-folder="Gold top-colored_XR.39" data-w="801" data-h="605" data-u="10" data-v="10" data-su="5" data-sv="0" aria-pressed="false">SC 3</button><button class="chip" type="button" data-id="sc4" data-name="Sculpture 4" data-folder="Sculpt-3_XR.103" data-w="800" data-h="708" data-u="10" data-v="10" data-su="5" data-sv="0" aria-pressed="false">SC 4</button><button class="chip" type="button" data-id="sc5" data-name="Sculpture 5" data-folder="Model_XR.117" data-w="801" data-h="601" data-u="10" data-v="10" data-su="5" data-sv="1" aria-pressed="false">SC 5</button></div>
+    <div class="viewer" id="turn" data-base="https://artorwar.com/wp-content/themes/customizr/" tabindex="0" role="img" aria-label="3D view">
+      <img alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="><span class="turn-load" role="status">Loading…</span>
+    </div>
+    <p class="viewer-note"><span id="viewerName"></span> · Drag to rotate, or use the arrow keys · Each new angle loads as you reach it.</p>
   </div>
 </section>
 <section class="cta-band tight">

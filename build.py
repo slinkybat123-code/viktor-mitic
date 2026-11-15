@@ -614,21 +614,29 @@ def build_sculptures():
     return page("sculptures.html", "Sculptures & installations · Viktor Mitic", "Sculptures and installations by Viktor Mitic: steel and 24k gold totems, cut aluminum, public art and Incident.", body, og=U + hero["l"])
 
 
-VIEWERS = [("sc1", "SC 1", "Sculpture 1", "final render_XR.29.html"), ("sc2", "SC 2", "Sculpture 2", "Sculpt 2_XR.71.html"),
-           ("sc3", "SC 3", "Gold Top", "Gold top-colored_XR.39.html"), ("sc4", "SC 4", "Sculpture 4", "Sculpt-3_XR.103.html"),
-           ("sc5", "SC 5", "Sculpture 5", "Model_XR.117.html")]
+VIEWERS = [  # id, tab label, name, folder, width, height, turn frames, tilt frames, start turn, start tilt
+    ("sc1", "SC 1", "Sculpture 1", "final render_XR.29", 886, 582, 20, 10, 10, 1),
+    ("sc2", "SC 2", "Sculpture 2", "Sculpt 2_XR.71", 800, 708, 18, 9, 9, 0),
+    ("sc3", "SC 3", "Gold Top", "Gold top-colored_XR.39", 801, 605, 10, 10, 5, 0),
+    ("sc4", "SC 4", "Sculpture 4", "Sculpt-3_XR.103", 800, 708, 10, 10, 5, 0),
+    ("sc5", "SC 5", "Sculpture 5", "Model_XR.117", 801, 601, 10, 10, 5, 1),
+]
 
 
 def build_3d():
-    tabs = "".join(f'<button class="chip" type="button" data-id="{i}" data-name="{esc(n)}" data-src="{V}{quote(f)}" aria-pressed="false">{l}</button>' for i, l, n, f in VIEWERS)
+    tabs = "".join(
+        f'<button class="chip" type="button" data-id="{i}" data-name="{esc(n)}" data-folder="{esc(f)}" data-w="{w}" data-h="{h}" '
+        f'data-u="{u}" data-v="{v}" data-su="{su}" data-sv="{sv}" aria-pressed="false">{l}</button>' for i, l, n, f, w, h, u, v, su, sv in VIEWERS)
     body = phero([("index.html", "Home"), ("index.html#works", "Works"), (None, "Sculptures in 3D")], "Interactive", "Click &amp; Drag",
-                 "Five sculptures you can turn. Drag across the image to rotate it.") + f"""
+                 "Five sculptures you can turn. Drag across the image to rotate it, up and down to tilt it.") + f"""
 <main id="main">
 <section class="tight" style="padding-top:0">
   <div class="wrap">
     <div class="tabs" role="group" aria-label="Choose a sculpture">{tabs}</div>
-    <div class="viewer"><iframe id="viewer" title="3D view" loading="lazy" allowfullscreen></iframe></div>
-    <p class="viewer-note"><span id="viewerName"></span> · Drag to rotate · Double-click for full screen · The first load can take a moment.</p>
+    <div class="viewer" id="turn" data-base="{V}" tabindex="0" role="img" aria-label="3D view">
+      <img alt="" src="{BLANK}"><span class="turn-load" role="status">Loading…</span>
+    </div>
+    <p class="viewer-note"><span id="viewerName"></span> · Drag to rotate, or use the arrow keys · Each new angle loads as you reach it.</p>
   </div>
 </section>
 {cta("Ask about a sculpture", "Tell us which piece caught your eye and we will send details.", "Available work")}

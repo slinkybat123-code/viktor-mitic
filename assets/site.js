@@ -105,13 +105,36 @@
     f.title=b.getAttribute('aria-label').replace(/^Play:\s*/,'');f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.allowFullscreen=true;
     b.replaceWith(f);f.focus()});
 
-  /* 3D viewer tabs */
-  const viewer=$('#viewer');
-  if(viewer){
-    const tabs=$$('.tabs .chip'),name=$('#viewerName');
-    const pick=id=>{const t=tabs.find(x=>x.dataset.id===id)||tabs[0];
+  /* 3D turntable: a grid of rendered frames named {tilt}_{turn}.png, loaded as they are needed */
+  const turn=$('#turn');
+  if(turn){
+    const img=$('img',turn),note=$('.turn-load',turn),tabs=$$('.tabs .chip'),name=$('#viewerName'),EMPTY=img.src;
+    let cfg={u:1,v:1,folder:''},u=0,v=0,cache={},want='';
+    const wrap=(n,m)=>((n%m)+m)%m;
+    const frame=(uu,vv)=>{const k=cfg.folder+'/'+vv+'_'+uu;
+      if(!cache[k]){const im=new Image();im.decoding='async';im.src=turn.dataset.base+encodeURIComponent(cfg.folder)+'/'+vv+'_'+uu+'.png';cache[k]=im}
+      return cache[k]};
+    const paint=()=>{const im=frame(u,v),k=im.src;want=k;
+      const done=()=>{if(want===k){img.src=k;note.hidden=true}};
+      if(im.complete&&im.naturalWidth)done();
+      else{note.hidden=false;note.textContent='Loading…';im.addEventListener('load',done,{once:true});
+        im.addEventListener('error',()=>{if(want===k)note.textContent='This view could not be loaded.'},{once:true})}
+      [1,-1].forEach(d=>frame(wrap(u+d,cfg.u),v))};
+    const pick=id=>{const t=tabs.find(x=>x.dataset.id===id)||tabs[0],d=t.dataset;
       tabs.forEach(x=>x.setAttribute('aria-pressed',x===t));
-      viewer.src=t.dataset.src;viewer.title='3D view: '+t.dataset.name;if(name)name.textContent=t.dataset.name};
+      cfg={folder:d.folder,u:+d.u,v:+d.v};u=+d.su;v=+d.sv;img.src=EMPTY;
+      turn.style.aspectRatio=d.w+'/'+d.h;turn.style.maxWidth=d.w+'px';
+      turn.setAttribute('aria-label','3D view of '+d.name+'. Drag, or use the arrow keys, to rotate.');
+      if(name)name.textContent=d.name;paint()};
+    let down=false,sx=0,sy=0,su=0,sv=0;
+    turn.addEventListener('pointerdown',e=>{if(e.button)return;down=true;sx=e.clientX;sy=e.clientY;su=u;sv=v;turn.setPointerCapture(e.pointerId);turn.classList.add('grab');e.preventDefault()});
+    turn.addEventListener('pointermove',e=>{if(!down)return;
+      const nu=wrap(su-Math.round((e.clientX-sx)/(turn.clientWidth/cfg.u/1.4)),cfg.u),nv=wrap(sv+Math.round((e.clientY-sy)/(turn.clientHeight/cfg.v/1.2)),cfg.v);
+      if(nu!==u||nv!==v){u=nu;v=nv;paint()}});
+    const up=()=>{down=false;turn.classList.remove('grab')};
+    turn.addEventListener('pointerup',up);turn.addEventListener('pointercancel',up);
+    turn.addEventListener('keydown',e=>{const m={ArrowLeft:[1,0],ArrowRight:[-1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(!m)return;
+      e.preventDefault();u=wrap(u+m[0],cfg.u);v=wrap(v+m[1],cfg.v);paint()});
     tabs.forEach(t=>t.onclick=()=>{pick(t.dataset.id);history.replaceState(null,'','#'+t.dataset.id)});
     pick(location.hash.slice(1));
   }
