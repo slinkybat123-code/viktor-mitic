@@ -1,3 +1,18 @@
+/* fonts: Cormorant Garamond and Inter, SIL Open Font License, served from this site */
+@font-face {font-family:'Cormorant Garamond';font-style:italic;font-weight:300;font-display:swap;src:url(fonts/cormorant-garamond-italic-300-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face {font-family:'Cormorant Garamond';font-style:italic;font-weight:300;font-display:swap;src:url(fonts/cormorant-garamond-italic-300-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+@font-face {font-family:'Cormorant Garamond';font-style:italic;font-weight:400;font-display:swap;src:url(fonts/cormorant-garamond-italic-300-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face {font-family:'Cormorant Garamond';font-style:italic;font-weight:400;font-display:swap;src:url(fonts/cormorant-garamond-italic-300-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+@font-face {font-family:'Cormorant Garamond';font-style:normal;font-weight:300;font-display:swap;src:url(fonts/cormorant-garamond-normal-300-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face {font-family:'Cormorant Garamond';font-style:normal;font-weight:300;font-display:swap;src:url(fonts/cormorant-garamond-normal-300-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+@font-face {font-family:'Cormorant Garamond';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/cormorant-garamond-normal-300-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face {font-family:'Cormorant Garamond';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/cormorant-garamond-normal-300-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+@font-face {font-family:'Inter';font-style:normal;font-weight:300;font-display:swap;src:url(fonts/inter-normal-300-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face {font-family:'Inter';font-style:normal;font-weight:300;font-display:swap;src:url(fonts/inter-normal-300-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+@font-face {font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/inter-normal-300-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face {font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/inter-normal-300-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+@font-face {font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/inter-normal-300-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face {font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/inter-normal-300-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
 /* Viktor Mitic — shared styles for every page */
 :root{
   --bg:#0b0a09; --bg2:#12100e; --bg3:#1a1612; --ink:#f2ece1; --soft:#cfc7ba; --muted:#a39a8d; --gold:#c8a35a;
@@ -14,7 +29,7 @@ ul,ol{list-style:none}
 button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.skip{position:fixed;left:16px;top:-60px;z-index:100;background:var(--gold);color:var(--bg);padding:10px 16px;font:500 12px var(--sans);transition:top .2s}
+.skip{position:fixed;left:16px;top:-60px;z-index:100;background:var(--gold);color:var(--bg);padding:16px 18px;font:500 12px var(--sans);transition:top .2s}
 .skip:focus{top:12px}
 .wrap{max-width:1360px;margin:0 auto;padding:0 var(--gutter)}
 .label{font:500 11px/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
@@ -44,6 +59,7 @@ nav.top.solid::after,nav.top.always::after{opacity:0}
 nav.top.solid{padding-block:14px}
 @media (min-width:1101px){nav.top:not(.solid) .links>a,nav.top:not(.solid) .dd-btn{text-shadow:0 1px 10px rgba(11,10,9,.8)}}
 .brand{font:400 15px/1 var(--serif);letter-spacing:.38em;text-transform:uppercase}
+nav.top .brand{padding-block:15px}
 nav.top:not(.solid) .brand{text-shadow:0 1px 10px rgba(11,10,9,.8)}
 .links{display:flex;gap:28px;align-items:center}
 .links a,.links .dd-btn{font:400 11px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--muted);transition:color .3s;background:none;border:0;cursor:pointer;padding:6px 0}
@@ -272,7 +288,7 @@ a.book:hover{background:var(--bg2)}
 .contact{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(32px,6vw,100px);align-items:start}
 .contact h2{font-size:clamp(30px,4vw,52px);margin-bottom:18px}
 .direct{border:1px solid var(--line);padding:28px;margin-top:28px;background:var(--bg2)}
-.direct .mail{margin:8px 0 18px;font-size:clamp(24px,2.6vw,34px)}
+.direct .mail{margin:8px 0 18px;padding-block:6px;font-size:clamp(24px,2.6vw,34px)}
 .direct .actions{margin-top:0;gap:10px}
 .facts{margin-top:34px;display:grid;gap:24px}
 .facts dt{font:500 11px/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
@@ -303,7 +319,7 @@ footer{border-top:1px solid var(--line);padding:64px 0 40px;color:var(--muted);f
 
 /* lightbox */
 dialog.lbox{border:0;background:transparent;max-width:100vw;max-height:100vh;width:100%;height:100%;color:var(--ink)}
-dialog.lbox::backdrop{background:rgba(6,5,4,.98)}
+dialog.lbox::backdrop{background:#070605}
 .lb .meta .more{padding:15px 0}
 .lb{display:grid;grid-template-rows:1fr auto;place-items:center;height:100%;padding:56px 16px 18px;gap:14px}
 .lb img{max-height:100%;max-width:100%;min-height:0;object-fit:contain}
@@ -376,6 +392,7 @@ span.rv{display:inline-block}
   .send .actions>:last-child{grid-column:1/-1}
   .tabs{flex-wrap:nowrap;gap:6px}
   .tabs .chip{flex:1 1 0;padding-inline:0}
+  .chips{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.chips .label{grid-column:1/-1;margin:0 0 8px}.chips .chip{padding-inline:0;text-align:center}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}.hero-img{animation:none}#rain{display:none}
@@ -390,6 +407,9 @@ span.rv{display:inline-block}
 .shots img{height:150px;width:auto;opacity:.92;transition:opacity .3s,transform 1s var(--ease)}
 .shots button:hover img{opacity:1;transform:scale(1.04)}
 .shots.tall img{height:300px}
+.shots:not(.tall){display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.shots:not(.tall) button{width:100%}
+.shots:not(.tall) img{width:100%;height:clamp(132px,13vw,190px);object-fit:cover}
 .credit{font-size:12px;color:var(--muted);margin-top:14px}
 .story{display:grid;grid-template-columns:1fr 1.3fr;gap:clamp(32px,6vw,90px);align-items:start}
 .story .rows li{grid-template-columns:clamp(64px,8vw,110px) 1fr}
@@ -404,6 +424,7 @@ span.rv{display:inline-block}
 }
 
 @media print{
+  *{text-shadow:none!important}
   /* flip every colour token so all text prints dark on white */
   :root{--bg:#fff;--bg2:#fff;--bg3:#f3f3f3;--ink:#000;--soft:#1c1c1c;--muted:#444;--gold:#000;--line:rgba(0,0,0,.3)}
   nav.top,#ring,footer,.skip,.actions,.cta-band,.pager,dialog,#rain,.scroll,.filters,.tabs{display:none!important}
@@ -421,3 +442,23 @@ span.rv{display:inline-block}
   section{padding:24px 0}
   a{text-decoration:none}
 }
+/* one-off spacing and the hero picture: kept here because the security policy blocks inline style attributes */
+.hero-img{background-image:url('../img/u/2017/10/Diptych-10-Aug-08-sm-web.jpg')}
+section.pt0{padding-top:0}
+.mt0{margin-top:0}
+.mt-26{margin-top:26px}
+.mt-36{margin-top:36px}
+.mt-section{margin-top:clamp(56px,8vw,100px)}
+.cv-actions{margin:0 0 clamp(40px,6vw,70px)}
+.mail.in-text{font-size:inherit;margin:0}
+.foot-note{max-width:300px;color:var(--muted)}
+/* news page */
+.news{border-top:1px solid var(--line)}
+.news li{display:grid;grid-template-columns:clamp(96px,12vw,170px) 1fr;gap:clamp(20px,4vw,60px);padding:clamp(28px,4vw,44px) 0;border-bottom:1px solid var(--line)}
+.news .yr{font:300 clamp(34px,4vw,52px)/1 var(--serif);color:var(--gold)}
+.news .when{display:block;font:500 11px/1.4 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:12px}
+.news h2{font-size:clamp(24px,2.6vw,34px);margin-bottom:10px}
+.news p{max-width:68ch}
+.news .more{margin-top:14px}
+@media (max-width:520px){.news li{grid-template-columns:1fr;gap:12px}.news .yr{display:flex;align-items:baseline;gap:14px}.news .when{margin-top:0}}
+main:focus{outline:none}

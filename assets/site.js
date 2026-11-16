@@ -114,14 +114,17 @@
     f.title=b.getAttribute('aria-label').replace(/^Play:\s*/,'');f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.allowFullscreen=true;
     b.replaceWith(f);f.focus()});
 
-  /* 3D turntable: a grid of rendered frames named {tilt}_{turn}.png, loaded as they are needed */
+  /* print button on the CV */
+  $$('[data-print]').forEach(b=>b.onclick=()=>print());
+
+  /* 3D turntable: a grid of rendered frames named {tilt}_{turn}.webp, loaded as they are needed */
   const turn=$('#turn');
   if(turn){
     const img=$('img',turn),note=$('.turn-load',turn),tabs=$$('.tabs .chip'),name=$('#viewerName'),EMPTY=img.src;
     let cfg={u:1,v:1,folder:''},u=0,v=0,cache={},want='';
     const wrap=(n,m)=>((n%m)+m)%m;
     const frame=(uu,vv)=>{const k=cfg.folder+'/'+vv+'_'+uu;
-      if(!cache[k]){const im=new Image();im.decoding='async';im.src=turn.dataset.base+encodeURIComponent(cfg.folder)+'/'+vv+'_'+uu+'.png';cache[k]=im}
+      if(!cache[k]){const im=new Image();im.decoding='async';im.src=turn.dataset.base+encodeURIComponent(cfg.folder)+'/'+vv+'_'+uu+'.webp';cache[k]=im}
       return cache[k]};
     const paint=()=>{const im=frame(u,v),k=im.src;want=k;
       const done=()=>{if(want===k){img.src=k;note.hidden=true}};
