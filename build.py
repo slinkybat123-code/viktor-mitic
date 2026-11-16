@@ -13,6 +13,8 @@ sys.path.insert(0, HERE)
 import site_meta  # noqa: E402  canonical addresses, sharing tags, sitemap (see site_meta.py)
 U = "https://artorwar.com/wp-content/uploads/"          # images are still served from here
 V = "https://artorwar.com/wp-content/themes/customizr/"  # 3D turntable files
+U2 = "https://artorwar.viktormitic.com/wp-content/uploads/2022/09/"  # images on the artist's second site
+OENO = "https://oenogallery.com/artists/viktor-mitic/"
 EMAIL = "info@artorwar.com"
 DATA = json.load(open(os.path.join(HERE, "data", "site.json"), encoding="utf-8"))
 for group in DATA.values():
@@ -150,8 +152,29 @@ def phero(crumbs, label, h1, intro, img=None, alt=""):
 </header>"""
 
 
+def src(path):
+    """Full address of an image: entries from data/site.json are relative to U, extras are already complete."""
+    return path if path.startswith("http") else U + path
+
+
+def extra(name, w, h):
+    """An image from the artist's second site, shaped like the entries in data/site.json."""
+    url = U2 + quote(name)
+    return {"f": url, "t": url, "l": url, "w": w, "h": h}
+
+
+def shots(items, group, cls=""):
+    """A row of small photographs at their natural size. items: (file, width, height, title)."""
+    out = ""
+    for name, w, h, title in items:
+        it = extra(name, w, h)
+        out += (f'<button type="button" {lb_attrs(it, group, title=title, alt=title)} aria-label="Enlarge {esc(title)}">'
+                f'<img loading="lazy" src="{it["t"]}" width="{w}" height="{h}" alt="{esc(title)}"></button>')
+    return f'<div class="shots{" " + cls if cls else ""}">{out}</div>'
+
+
 def lb_attrs(it, group, title="", cap="", alt="", enq=""):
-    a = f'data-lb="{group}" data-src="{U}{it["l"]}" data-alt="{esc(alt)}"'
+    a = f'data-lb="{group}" data-src="{src(it["l"])}" data-alt="{esc(alt)}"'
     if title:
         a += f' data-title="{esc(title)}"'
     if cap:
@@ -166,8 +189,9 @@ def tile(it, group, alt, title="", cap="", n=0):
     fc = ""
     if title or cap:
         fc = "<figcaption>" + (f"<strong>{esc(title)}</strong>" if title else "") + esc(cap) + "</figcaption>"
-    return (f'<figure class="tile"><button type="button" {lb_attrs(it, group, title, cap, alt)} aria-label="Enlarge {esc(label)}">'
-            f'<img loading="lazy" src="{U}{it["t"]}" width="{it["w"]}" height="{it["h"]}" alt="{esc(alt)}"></button>{fc}</figure>')
+    cls = "tile small" if it["w"] < 300 else "tile"  # small originals are shown at their own size, not stretched
+    return (f'<figure class="{cls}"><button type="button" {lb_attrs(it, group, title, cap, alt)} aria-label="Enlarge {esc(label)}">'
+            f'<img loading="lazy" src="{src(it["t"])}" width="{it["w"]}" height="{it["h"]}" alt="{esc(alt)}"></button>{fc}</figure>')
 
 
 def strip(group, picks, alt):
@@ -175,7 +199,7 @@ def strip(group, picks, alt):
     for i, (name, wide) in enumerate(picks, 1):
         it = by_file(group, name)
         out.append(f'<button type="button"{" class=wide" if wide else ""} {lb_attrs(it, "strip-" + group, alt=alt)} aria-label="Enlarge image {i} of {len(picks)}">'
-                   f'<img loading="lazy" src="{U}{it["t"]}" alt="{esc(alt)}, view {i}"></button>')
+                   f'<img loading="lazy" src="{src(it["t"])}" alt="{esc(alt)}, view {i}"></button>')
     return f'<div class="strip">{"".join(out)}</div>'
 
 
@@ -422,7 +446,8 @@ def build_index():
 
 # ------------------------------------------------------------------ series pages
 def build_rain():
-    g = "".join(tile(it, "rain", "Rain Dance, painting by Viktor Mitic", n=i) for i, it in enumerate(DATA["rain"], 1))
+    works = DATA["rain"] + [extra("viktor-16jun08-008a-web-crop-u5356.jpg", 259, 164), extra("viktor-16jun08-014a-web-crop-u5300.jpg", 259, 150)]
+    g = "".join(tile(it, "rain", "Rain Dance, painting by Viktor Mitic", n=i) for i, it in enumerate(works, 1))
     body = phero([("index.html", "Home"), ("index.html#works", "Works"), (None, "Rain Dance")], "Series · Painting", "Rain Dance",
                  "Paintings made outdoors, in the rain, at sites across North America.",
                  U + "2017/10/Diptych-10-Aug-08-sm-web.jpg", "Rain Dance diptych by Viktor Mitic") + f"""
@@ -433,6 +458,7 @@ def build_rain():
     <div class="rv prose">
       <p>In Rain Dance, Mitic mixes natural elements with traditional painting mediums. Each canvas was made outside while it rained, so the weather on the day shaped the result as much as the brush did.</p>
       <p>He came to the method by accident and calls it acid rain painting: non-representational paintings on canvas that the environment helps to make. He has said he enjoys rebuilding structures that nature has erased.</p>
+      <p>It is a kind of aleatory art, art that lets chance in. The canvases lie flat on the ground outdoors, and the rain is a constant painting partner whose effects cannot be planned.</p>
       <p><em>Galaxy</em> (2008) was shown at Muramatsu Gallery in Tokyo and later sold at a charity auction in Toronto to a private collector. It is on the cover of the <em>Rain Dance</em> book.</p>
       <a class="more" href="books.html#rain-dance">The book and film</a>
     </div>
@@ -440,7 +466,7 @@ def build_rain():
 </section>
 <section class="feature tight">
   <div class="wrap">
-    <div class="sec-head sm"><h2>The <em>paintings</em></h2><span class="label">{len(DATA["rain"])} works · select to enlarge</span></div>
+    <div class="sec-head sm"><h2>The <em>paintings</em></h2><span class="label">{len(works)} works · select to enlarge</span></div>
     <div class="gal">{g}</div>
   </div>
 </section>
@@ -453,7 +479,10 @@ def build_rain():
 def build_war():
     titles = {"Viktor-hirez": "Blasted Guernica", "cropped-incident-c": "Incident"}
     g = ""
-    for i, it in enumerate(DATA["war"], 1):
+    works = DATA["war"] + [extra("viktor_08.jpg", 924, 928), extra("viktor_mstr-148.jpg", 956, 1174),
+                           extra("viktor-matic-_0030_doc1-1200x796-1.jpg", 511, 339), extra("viktor_doc-1841-582x540-crop-u5527.jpg", 480, 339),
+                           extra("viktor-mitic-homebg-537x540-crop-u5393.jpg", 480, 339)]
+    for i, it in enumerate(works, 1):
         t = next((v for k, v in titles.items() if k in it["f"]), "")
         g += tile(it, "war", (t + ", " if t else "") + "work by Viktor Mitic from Art or War", title=t, n=i)
     notable = [
@@ -489,7 +518,7 @@ def build_war():
 </section>
 <section class="feature tight">
   <div class="wrap">
-    <div class="sec-head sm"><h2>The <em>paintings</em></h2><span class="label">{len(DATA["war"])} works · select to enlarge</span></div>
+    <div class="sec-head sm"><h2>The <em>paintings</em></h2><span class="label">{len(works)} works · select to enlarge</span></div>
     <div class="gal">{g}</div>
   </div>
 </section>
@@ -518,7 +547,8 @@ def dealer_name(f):
 
 def build_dealers():
     g = ""
-    for i, it in enumerate(DATA["dealers"], 1):
+    works = DATA["dealers"] + [extra("untitled-1500x623-1.jpg", 500, 623)]
+    for i, it in enumerate(works, 1):
         t = dealer_name(it["f"])
         g += tile(it, "dealers", (t + ". " if t else "") + "Portrait from Dealers by Viktor Mitic, Japanese ink on gold leaf", title=t, n=i)
     body = phero([("index.html", "Home"), ("index.html#works", "Works"), (None, "Dealers")], "Series · Japanese ink on gold leaf", "Dealers",
@@ -530,6 +560,7 @@ def build_dealers():
     <div class="rv prose">
       <p>Dealers is a series of portraits in Japanese ink on gold leaf. It opened at Odon Wagner Contemporary in Toronto on December 11, 2009, Mitic's first solo show with the gallery, together with a book of the same name.</p>
       <p>The series turns the usual arrangement around. A dealer normally promotes the artist. Here the artist promotes the dealer.</p>
+      <p>The book presents it as a portrait survey of the city's most distinctive dealers, each one caught in character: passionate, shrewd, eccentric or genial.</p>
       <p>Nine of the portraits are currently listed as available.</p>
       <a class="more" href="available-work.html#dealers">Available portraits</a>
       <a class="more" href="books.html#dealers">The book</a>
@@ -538,7 +569,7 @@ def build_dealers():
 </section>
 <section class="feature tight">
   <div class="wrap">
-    <div class="sec-head sm"><h2>The <em>portraits</em></h2><span class="label">{len(DATA["dealers"])} shown · select to enlarge</span></div>
+    <div class="sec-head sm"><h2>The <em>portraits</em></h2><span class="label">{len(works)} shown · select to enlarge</span></div>
     <div class="gal c5">{g}</div>
   </div>
 </section>
@@ -554,6 +585,8 @@ SCULPT_CAPS = {
     "9206d1df": ("Red-Gold", "Abstract forms with 24k gold accents, for indoors or outdoors."),
     "red-6": ("Red-Gold", ""), "red-gold-gold-plated": ("Red-Gold", "Gold-plated stainless steel."),
     "puff-samurai": ("Puff Samurai", ""),
+    "hotel-elevator-lobby": ("", "View for a hotel elevator lobby."),
+    "img_2016": ("", "In the studio, 2016."),
 }
 MEDIA_CAPS = {
     "CELESTIAL": ("Celestial", "Sonoma, California. Collection of Gary Spain."), "1_viktor_mitic": ("Lyric Star", "Marriott Hotel, Markham, Ontario."),
@@ -573,7 +606,24 @@ def lookup(table, f):
 
 def build_sculptures():
     g = ""
-    for i, it in enumerate(DATA["sculpt"], 1):
+    works = DATA["sculpt"] + [extra("dsc_2058.jpg", 921, 518), extra("hotel-elevator-lobby-view_white-wall.jpg", 916, 512),
+                              extra("img_20160522_132531-crop-u7615.jpg", 480, 339), extra("img_20160721_220325-crop-u7681.jpg", 480, 339),
+                              extra("img_20160523_213644-crop-u7653.jpg", 480, 339)]
+    bus = [("viktor_mitic_bus©john_drajewicz_0122.jpg", 268, 171, "Incident, the school bus"),
+           ("viktor_mitic_bus©john_drajewicz_0007.jpg", 323, 242, "Incident, side view"),
+           ("viktor_mitic_bus©john_drajewicz_0082208x156.jpg", 207, 156, "Incident, bullet holes in the bodywork"),
+           ("viktor_mitic_bus©john_drajewicz_0067.jpg", 233, 311, "Incident, the shattered windscreen"),
+           ("viktor_mitic_bus©john_drajewicz_0053.jpg", 210, 158, "Incident, detail of the side panel"),
+           ("gun_porn_2-1024x575-1.jpg", 278, 156, "Incident in Washington, D.C., a still from the film Gun Porn")]
+    story = [
+        ("2012", "<em>The idea</em>", "With Toronto's Nuit Blanche approaching, Mitic wanted to take the bullet works somewhere new. He bought a yellow school bus and fired about 6,000 rounds into it. He named it Incident and thought of it as forensic evidence: a study of how closely violence and beauty now sit together."),
+        ("2012", "<em>Nuit Blanche</em>", "The bus was moved to Todmorden Mills for the festival. Parents who saw it beforehand called the police, and the organisers asked that it stay covered until the night itself. It was on view for seven hours before he was asked to remove it."),
+        ("2013", "<em>To Washington</em>", "After the Newtown school shooting, talks with peers led to a U.S. tour. Charles Krause, a Washington gallery owner and journalist, invited the bus to his gallery event The Newtown Project: Art Targets Guns."),
+        ("2013", "<em>Around the city</em>", "Loaded onto a flatbed truck, Incident was parked and shown near the White House, in Georgetown, in Chinatown, in Adams Morgan and at George Mason University."),
+        ("2013", "<em>Coverage</em>", "Fox News, CBS, ABC, MSNBC, The Washington Post and the Huffington Post ran feature stories, many with interviews. In Canada it was covered by the CBC, CTV, Global and the Toronto Star."),
+        ("Since", "<em>Acquired</em>", "An American collector in New York State acquired the bus, and it remains there."),
+    ]
+    for i, it in enumerate(works, 1):
         t, c = lookup(SCULPT_CAPS, it["f"])
         g += tile(it, "sculpt", (t + ", " if t else "") + "sculpture by Viktor Mitic", title=t, cap=c, n=i)
     public = [
@@ -603,7 +653,7 @@ def build_sculptures():
 </section>
 <section class="feature tight">
   <div class="wrap">
-    <div class="sec-head sm"><h2>The <em>sculptures</em></h2><span class="label">{len(DATA["sculpt"])} images · select to enlarge</span></div>
+    <div class="sec-head sm"><h2>The <em>sculptures</em></h2><span class="label">{len(works)} images · select to enlarge</span></div>
     <div class="gal">{g}</div>
   </div>
 </section>
@@ -613,10 +663,22 @@ def build_sculptures():
     <span class="label">Installation · 2013</span>
     <h2 id="incident-h">Incident</h2>
     <p>A school bus shot through with bullet holes. It premiered at Nuit Blanche in Toronto, then toured to Washington, D.C. in April 2013 during the U.S. gun debates. It is in the permanent collection of Artisan Works in Rochester, New York.</p>
-    <div class="row"><a class="more" href="press.html">Press and video</a></div>
+    <div class="row"><a class="more" href="#incident-story">The full story</a><a class="more" href="press.html">Press and video</a></div>
   </div>
 </section>
-<section class="tight">
+<section class="tight" id="incident-story">
+  <div class="wrap">
+    <div class="sec-head sm rv"><h2>Violence <em>as beauty</em></h2><span class="label">The story of Incident</span></div>
+    <div class="story">
+      <div class="rv">
+        {shots(bus, "incident")}
+        <p class="credit">Bus photographs © John Drajewicz. Select any photograph to enlarge it.</p>
+      </div>
+      <div class="rv">{rows(story)}</div>
+    </div>
+  </div>
+</section>
+<section class="feature tight">
   <div class="wrap">
     <div class="sec-head sm rv"><h2>Public <em>art</em></h2><a class="more" href="cv.html">Full CV</a></div>
     {rows(public)}
@@ -712,7 +774,7 @@ def build_available():
     <p class="count" id="count" aria-live="polite">Showing {total} of {total} works</p>
     <h2 class="sr">Works</h2>
     <div class="gal">{cards}</div>
-    <p class="note">Prices, dimensions and availability are confirmed by the studio on request. Select any image to enlarge it.</p>
+    <p class="note">Prices, dimensions and availability are confirmed by the studio on request. Select any image to enlarge it. Works are also offered through <a class="inline" href="{OENO}" target="_blank" rel="noopener">Oeno Gallery</a>, which lists its current pieces and prices.</p>
   </div>
 </section>
 {cta("Found something?", "Send the reference number and we will reply with price, size and shipping details.", "Available work",
@@ -762,6 +824,13 @@ def build_press():
         else:
             arts += f'<li><div class="dead"><span class="o">{esc(o)}</span><span class="s">{esc(s)}</span><span class="r">No longer online</span></div></li>'
     inc = by_file("war", "cropped-incident-c.jpg")
+    clips = [("viktormitic_torontostar_cover_april10_132.jpg", 225, 433, "Toronto Star, front page, April 10, 2013"),
+             ("globe-300x267-1.jpg", 300, 267, "The Globe and Mail, Globe Review"),
+             ("nationalpost-326x540-1.jpg", 260, 431, "National Post"),
+             ("dailymail2.jpg", 196, 433, "Daily Mail"),
+             ("telegraph-661x12002-1.jpg", 239, 433, "Telegraph-Journal"),
+             ("dynamic_resize-248x3002-1.jpg", 225, 272, "Toronto Sun, front page"),
+             ("huffington-post2.jpg", 294, 473, "The Huffington Post")]
     body = phero([("index.html", "Home"), (None, "Press & video")], "Media coverage", "In the press",
                  "Television, newspapers and magazines on the bullet paintings, the bus and the sculptures.", U + inc["f"], "Incident, the bullet-riddled school bus") + f"""
 <main id="main">
@@ -769,7 +838,13 @@ def build_press():
   <div class="wrap">
     <div class="sec-head sm rv"><h2>On <em>television</em></h2><span class="label">{len(VIDEOS)} videos</span></div>
     <div class="videos">{vids}</div>
-    <p class="note">Videos play from YouTube when you press play.</p>
+    <p class="note">Videos play from YouTube when you press play. When Incident went to Washington, the story also ran on CBS, ABC and MSNBC, and in Canada on CTV.</p>
+  </div>
+</section>
+<section class="tight" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head sm rv"><h2>In the <em>papers</em></h2><span class="label">{len(clips)} clippings · select to enlarge</span></div>
+    {shots(clips, "clips", "tall")}
   </div>
 </section>
 <section class="feature tight">
@@ -794,7 +869,7 @@ def build_press():
 
 
 # ------------------------------------------------------------------ books, cv, acquisitions
-FILMS = [("Point Blank: Art or War", "Nora Stankovic · 11 min · Cannes Film Festival", "2016"), ("Gun Porn", "Brahm Rosensweig · 11 min · Hot Docs, Hulu", "2014"),
+FILMS = [("Point Blank: Art or War", "Nora Stankovic · 6 min · Cannes Film Festival", "2016"), ("Gun Porn", "Brahm Rosensweig · 11 min · Hot Docs, Hulu", "2014"),
          ("Rain Dance", "Brahm Rosensweig · 14 min · Fourfront Editions", "2011"), ("Art or War", "Laurie Kwasnik · 12 min · Tightrope Books", "2010")]
 
 
@@ -804,13 +879,15 @@ def films_html():
 
 def build_books():
     own = [
-        ("dealers", "01 · 2009", "Dealers", "The 36 portraits of Toronto's art dealers. Introduction by Gary Michael Dault. Tightrope Books.", "https://www.amazon.ca/Dealers-Viktor-Mitic/dp/1926639146", "dealers.html"),
-        ("art-or-war", "02 · 2010", "Art or War", "Bullet hole paintings by Viktor Mitic. Introduction by Jim Nason. Tightrope Books.", "https://www.amazon.ca/Art-War-Paintings-Viktor-Mitic/dp/1926639154", "art-or-war.html"),
-        ("rain-dance", "03 · 2011", "Rain Dance", "Reproductions of the rain paintings, with Galaxy on the cover, published with a DVD. Fourfront Editions.", "https://www.amazon.com/Rain-Dance-DVD-Viktor-Mitic/dp/1926802667", "rain-dance.html"),
+        ("dealers", "01 · 2009", "Dealers", "The 36 portraits of Toronto's art dealers. Introduction by Gary Michael Dault. Tightrope Books.", "https://www.amazon.ca/Dealers-Viktor-Mitic/dp/1926639146", "dealers.html", ("dealersbook2.jpg", 130, 177)),
+        ("art-or-war", "02 · 2010", "Art or War", "Bullet hole paintings by Viktor Mitic. Introduction by Jim Nason. Tightrope Books.", "https://www.amazon.ca/Art-War-Paintings-Viktor-Mitic/dp/1926639154", "art-or-war.html", ("artofwarbook2.jpg", 170, 177)),
+        ("rain-dance", "03 · 2011", "Rain Dance", "Reproductions of the rain paintings, with Galaxy on the cover, published with a DVD. Fourfront Editions.", "https://www.amazon.com/Rain-Dance-DVD-Viktor-Mitic/dp/1926802667", "rain-dance.html", ("raindancebook2.jpg", 181, 177)),
     ]
     own_html = "".join(
-        f'<div class="book" id="{i}"><span class="n">{n}</span><h3>{t}</h3><p>{p}</p>'
-        f'<a class="more" href="{buy}" target="_blank" rel="noopener">Find the book</a><a class="more" href="{series}">See the series</a></div>' for i, n, t, p, buy, series in own)
+        f'<div class="book" id="{i}"><img loading="lazy" src="{U2}{cover}" width="{cw}" height="{ch}" alt="Cover of the book {t}">'
+        f'<span class="n">{n}</span><h3>{t}</h3><p>{p}</p>'
+        f'<a class="more" href="{buy}" target="_blank" rel="noopener">Find the book</a><a class="more" href="{series}">See the series</a></div>' for i, n, t, p, buy, series, (cover, cw, ch) in own)
+    poster = by_file("war", "Viktor-hirez")
     essays = [("2021", "<em>Shifting Paradigms: Essays on Art and Culture</em>", "Guernica Editions. Includes an extensive essay on Mitic's work."),
               ("2018", "<em>Cagdas Sanat Ve Yeniden Uretim</em>", "Hayalaperest Yayinevi. Includes an extensive essay on Mitic's work."),
               ("2017", "<em>Desire Lines</em>", "Guernica Editions. Includes an extensive essay on Mitic's work.")]
@@ -832,6 +909,16 @@ def build_books():
 <section class="tight">
   <div class="wrap">
     <div class="sec-head sm rv"><h2>On <em>film</em></h2><a class="more" href="press.html">Television and video</a></div>
+    <div class="film rv">
+      <article class="video"><div class="frame"><button type="button" data-vimeo="178039534" aria-label="Play: Point Blank: Art or War, a film by Nora Stankovic">
+        <img loading="lazy" src="{U}{poster["l"]}" alt=""></button></div></article>
+      <div>
+        <span class="label">Watch · 6 minutes</span>
+        <h3>Point Blank: Art or War</h3>
+        <p>A short film by Nora Stankovic, shown at the Cannes Film Festival in 2016. It plays from Vimeo when you press play.</p>
+        <a class="more" href="https://vimeo.com/178039534" target="_blank" rel="noopener">Open on Vimeo</a>
+      </div>
+    </div>
     <div class="films rv" style="margin-top:0">{films_html()}</div>
   </div>
 </section>
@@ -959,7 +1046,7 @@ def build_contact():
       </div>
       <dl class="facts">
         <div><dt>Studios</dt><dd>Toronto, Ontario · Sarasota, Florida</dd></div>
-        <div><dt>Gallery</dt><dd>Oeno Gallery, Prince Edward County, Ontario</dd></div>
+        <div><dt>Gallery</dt><dd><a class="inline" href="{OENO}" target="_blank" rel="noopener">Oeno Gallery</a>, Prince Edward County, Ontario</dd></div>
         <div><dt>Quote a reference</dt><dd>Each piece on the <a class="inline" href="available-work.html">available work</a> page has a number such as AW-12.</dd></div>
       </dl>
     </div>

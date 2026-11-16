@@ -108,8 +108,9 @@
   }
 
   /* video: load the player only when asked */
-  document.addEventListener('click',e=>{const b=e.target.closest('button[data-yt]');if(!b)return;
-    const f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+b.dataset.yt+'?autoplay=1&rel=0';
+  document.addEventListener('click',e=>{const b=e.target.closest('button[data-yt],button[data-vimeo]');if(!b)return;
+    const f=document.createElement('iframe');
+    f.src=b.dataset.yt?'https://www.youtube-nocookie.com/embed/'+b.dataset.yt+'?autoplay=1&rel=0':'https://player.vimeo.com/video/'+b.dataset.vimeo+'?autoplay=1&dnt=1';
     f.title=b.getAttribute('aria-label').replace(/^Play:\s*/,'');f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.allowFullscreen=true;
     b.replaceWith(f);f.focus()});
 

@@ -382,6 +382,27 @@ span.rv{display:inline-block}
   .js .rv{opacity:1;transform:none;transition:none}
 }
 
+/* small originals, photo rows, the Incident story, the film player */
+.tile.small>button{display:grid;place-items:center;padding:18px}
+.tile.small img{width:auto;max-width:100%}
+.shots{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.shots button{border:0;padding:0;background:var(--bg3);cursor:zoom-in;overflow:hidden;line-height:0}
+.shots img{height:150px;width:auto;opacity:.92;transition:opacity .3s,transform 1s var(--ease)}
+.shots button:hover img{opacity:1;transform:scale(1.04)}
+.shots.tall img{height:300px}
+.credit{font-size:12px;color:var(--muted);margin-top:14px}
+.story{display:grid;grid-template-columns:1fr 1.3fr;gap:clamp(32px,6vw,90px);align-items:start}
+.story .rows li{grid-template-columns:clamp(64px,8vw,110px) 1fr}
+.book img{height:150px;width:auto;align-self:flex-start;margin-bottom:8px}
+.film{display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(24px,5vw,70px);align-items:center;margin-bottom:clamp(40px,6vw,70px)}
+.film h3{font-size:clamp(28px,3vw,40px);font-style:italic;margin:14px 0 12px}
+.film .more{margin-top:14px}
+@media (max-width:860px){
+  .story,.film{grid-template-columns:1fr}
+  .shots img{height:118px}
+  .shots.tall img{height:210px}
+}
+
 @media print{
   /* flip every colour token so all text prints dark on white */
   :root{--bg:#fff;--bg2:#fff;--bg3:#f3f3f3;--ink:#000;--soft:#1c1c1c;--muted:#444;--gold:#000;--line:rgba(0,0,0,.3)}
