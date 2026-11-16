@@ -5,12 +5,13 @@
     parts.py    building blocks (page headers, image tiles, lists, calls to action)
     layout.py   the frame around every page (<head>, navigation, footer, image viewer)
     meta.py     search and sharing tags, sitemap.xml, robots.txt
+    redirects.py  forwarding pages for the old WordPress addresses
     pages/      one module per area of the site
 """
 import os
 import shutil
 
-from . import meta
+from . import meta, redirects
 from .config import OUT, ROOT
 
 COPY = ["assets", "img"]  # folders copied into the finished site unchanged
@@ -29,6 +30,8 @@ def build_all():
             shutil.copytree(os.path.join(ROOT, folder), os.path.join(OUT, folder))
     built = [build() for build in ALL]
     listed = meta.finish(built)
+    moved = redirects.write_redirects()
     print("built", len(built), "pages into _site/:", ", ".join(built))
+    print(moved, "forwarding pages for old artorwar.com addresses")
     print("sitemap.xml lists", listed, "pages; robots.txt written")
     return built

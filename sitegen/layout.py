@@ -1,6 +1,8 @@
 """The frame around every page: <head>, navigation, footer and image viewer."""
 import os
+import re
 from html import escape as esc
+from urllib.parse import urlsplit
 
 from . import meta
 from .config import BLANK, CSP, CSS_V, EMAIL, HEAD_JS, JS_V, NAV, OUT, SERIES, SITE_URL, U
@@ -93,6 +95,15 @@ def page(slug, title, desc, body, og=None, preload=None):
 </body>
 </html>
 """
+    if slug == "404.html":
+        html = rooted(html)
     with open(os.path.join(OUT, slug), "w", encoding="utf-8", newline="\n") as f:
         f.write(html)
     return slug
+
+
+def rooted(html):
+    """GitHub Pages shows 404.html at whatever address was missing, however deep, so its links
+    and files must start from the site root instead of the current folder."""
+    root = urlsplit(SITE_URL).path  # "/viktor-mitic/" now, "/" on a custom domain
+    return re.sub(r'\b(href|src|data-src|data-base)="(?!https?:|mailto:|tel:|data:|#|/)', lambda m: f'{m.group(1)}="{root}', html)

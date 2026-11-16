@@ -25,6 +25,8 @@ OUT = os.path.join(ROOT, "_site")
 sys.path.insert(0, ROOT)
 from sitegen.config import HEAD_JS, SITE_URL  # noqa: E402
 
+ROOT_PATH = urlsplit(SITE_URL).path  # "/viktor-mitic/" on github.io, "/" on a custom domain
+
 OLD_SITE = "artorwar.com"
 REMOTE_OK = {"i.ytimg.com"}  # the only outside host pictures may come from (YouTube previews)
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36"
@@ -91,6 +93,8 @@ def main():
                 continue
             if url.startswith(SITE_URL):  # this site's own full address (canonical, sharing picture)
                 url = url[len(SITE_URL):] or "index.html"
+            elif url.startswith(ROOT_PATH):  # root-based links on the 404 page
+                url = url[len(ROOT_PATH):] or "index.html"
             if url.startswith("#"):
                 if len(url) > 1 and url[1:] not in ids[name]:
                     add("missing files or anchors", url)
@@ -124,13 +128,31 @@ def main():
                     if not os.path.exists(local(f"{base.group(1)}{folder}/{v}_{u}.webp")):
                         add("missing files or anchors", f"3D frame {folder}/{v}_{u}.webp")
 
+    # forwarding pages for old WordPress addresses: each must lead to a page that exists
+    moved = 0
+    for path in glob.glob(os.path.join(OUT, "**", "index.html"), recursive=True):
+        if os.path.dirname(path) == OUT:
+            continue
+        moved += 1
+        html = open(path, encoding="utf-8").read()
+        where = os.path.relpath(path, OUT).replace(os.sep, "/")
+        m = re.search(r'http-equiv="refresh" content="0; url=([^"]+)"', html)
+        if '<meta http-equiv="Content-Security-Policy"' not in html:
+            problems["security policy"].append(f"{where}: no Content-Security-Policy tag")
+        if not m:
+            problems["missing files or anchors"].append(f"{where}: no forwarding address")
+            continue
+        target = os.path.normpath(os.path.join(os.path.dirname(path), unescape(m.group(1)).split("#")[0]))
+        if not os.path.exists(target):
+            problems["missing files or anchors"].append(f"{where}: forwards to a missing page")
+
     # files the stylesheet points at (fonts, the hero picture)
     css_path = os.path.join(OUT, "assets", "site.css")
     for ref in re.findall(r"url\(['\"]?([^'\")]+)['\"]?\)", open(css_path, encoding="utf-8").read()):
         if not ref.startswith("data:") and not os.path.exists(os.path.normpath(os.path.join(os.path.dirname(css_path), ref))):
             problems["missing files or anchors"].append("site.css: " + ref)
 
-    print(f"pages: {len(pages)}   3D frames: {frames}   links to other websites: {len(external)}")
+    print(f"pages: {len(pages)}   forwarding pages: {moved}   3D frames: {frames}   links to other websites: {len(external)}")
     failed = False
     for kind, items in problems.items():
         print(f"{kind}: {len(items)}")
