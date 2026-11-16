@@ -6,7 +6,7 @@ from ..layout import page
 from ..parts import by_file, cta, phero
 
 # (year, when, headline, text, link, link label). Text may contain <em>; links open in a new tab
-# unless they point at a page of this site.
+# unless they point at a page of this site. Leave link and label empty ("") for no link.
 NEWS = [
     ("2026", "April", "A feature on the post-Pop sculptures",
      "Canadian Art Junkie publishes a feature on the recent sculptures, among them the 2025 <em>XoX</em> Kiddo figures in painted resin and <em>Halcyon Gold</em>, a 7 ft piece in gold-finished stainless steel.",
@@ -25,7 +25,7 @@ NEWS = [
      "contact.html?topic=Available%20work", "Ask about these works"),
     ("2024", "January 26", "Art or War and So Much More",
      "An artist talk at the Arts Advocates Gallery at the Crossings at Siesta Key, Sarasota, on the bullet paintings and the work that followed.",
-     "https://www.artsadvocates.org/component/eventbooking/gallery/248-art-talk-viktor-mitic-art-or-war-and-so-much-more", "Arts Advocates"),
+     "", ""),  # the event page was taken down in 2026
     ("2023", "May", "Getting people talking",
      "SRQ Magazine profiles the studio and sculpture garden on Siesta Key, and the plan for a 20 ft stainless steel <em>XOX</em> painted bright yellow.",
      "https://www.srqmagazine.com/articles/1834/Getting-People-Talking", "SRQ Magazine"),
@@ -38,10 +38,10 @@ NEWS = [
 def build_news():
     items = ""
     for year, when, head, text, link, label in NEWS:
-        outside = link.startswith("http")
-        attrs = ' target="_blank" rel="noopener"' if outside else ""
+        attrs = ' target="_blank" rel="noopener"' if link.startswith("http") else ""
+        more = f'<a class="more" href="{esc(link)}"{attrs}>{esc(label)}</a>' if link else ""
         items += (f'<li class="rv"><span class="yr">{year}<span class="when">{esc(when)}</span></span>'
-                  f'<div><h2>{esc(head)}</h2><p>{text}</p><a class="more" href="{esc(link)}"{attrs}>{esc(label)}</a></div></li>')
+                  f'<div><h2>{esc(head)}</h2><p>{text}</p>{more}</div></li>')
     hero = by_file("media", "heartland-oeno")
     body = phero([("index.html", "Home"), (None, "News")], "From the studio", "News",
                  "New work, exhibitions and coverage since 2023, newest first.") + f"""
