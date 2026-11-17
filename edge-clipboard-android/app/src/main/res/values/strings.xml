@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Edge Clipboard</string>
+    <string name="a11y_label">Edge Clipboard copy detection</string>
+    <string name="a11y_desc">Detects when you tap Copy in any app, so Edge Clipboard can save the text. It does not read the screen and sends no data.</string>
+    <string name="handle_desc">Clipboard handle. Tap to open. Touch and hold to move.</string>
+    <string name="notif_channel">Edge handle</string>
+    <string name="notif_title">Edge Clipboard is on</string>
+    <string name="notif_text">Tap to open the clipboard</string>
+    <string name="stop">Stop</string>
+    <string name="copied">Copied</string>
+    <string name="clipboard">Clipboard</string>
+    <string name="clear">Clear</string>
+    <string name="count">%1$d/%2$d</string>
+    <string name="empty">No clips yet.\nText you copy shows here.</string>
+    <string name="pin">Pin clip</string>
+    <string name="unpin">Unpin clip</string>
+    <string name="delete">Delete clip</string>
+
+    <string name="main_intro">Tap the handle, or swipe it inward, to open your clipboard. Touch and hold the handle to move it. It snaps to the nearest edge. The app keeps your last 30 clips. Pinned clips stay.</string>
+    <string name="toggle">Show edge handle</string>
+    <string name="permissions">Permissions</string>
+    <string name="handle_size">Handle</string>
+    <string name="width">Width</string>
+    <string name="height">Height</string>
+    <string name="opacity">Opacity</string>
+    <string name="open_panel">Open clipboard now</string>
+    <string name="reset_size">Reset size</string>
+    <string name="granted">On</string>
+    <string name="grant">Turn on</string>
+    <string name="perm_overlay">Display over other apps</string>
+    <string name="perm_overlay_desc">Required. Shows the handle and the panel.</string>
+    <string name="perm_a11y">Copy detection</string>
+    <string name="perm_a11y_desc">Recommended. Android blocks clipboard access in the background. This saves clips the moment you copy. Without it, clips save when you open the panel.</string>
+    <string name="perm_notif">Notifications</string>
+    <string name="perm_notif_desc">Shows the status notification that keeps the handle running.</string>
+    <string name="perm_battery">Unrestricted battery</string>
+    <string name="perm_battery_desc">Stops ColorOS from closing the handle.</string>
+    <string name="coloros_title">Oppo / ColorOS</string>
+    <string name="coloros_tips">1. Settings &gt; Apps &gt; Edge Clipboard &gt; Battery usage: allow background activity and auto launch.\n2. In Recent apps, lock Edge Clipboard (pull the card down).\n3. If Copy detection turns off after a restart, turn it on again in Accessibility.</string>
+</resources>
