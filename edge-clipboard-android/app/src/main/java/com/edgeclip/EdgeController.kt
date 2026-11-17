@@ -397,6 +397,17 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
         (card.layoutParams as FrameLayout.LayoutParams).apply {
             gravity = if (right) Gravity.END else Gravity.START
             width = cardW.toInt()
+            // Height and vertical position are adjustable; the panel does not need the full screen side.
+            val sh = screen().y
+            val h = (sh * Prefs.get(this@EdgeController, K.P_HEIGHT).coerceIn(20, 100) / 100f).toInt()
+            height = h
+            gravity = gravity or Gravity.TOP
+            val free = sh - h
+            topMargin = if (Prefs.on(this@EdgeController, K.P_FOLLOW)) {
+                (hp.y + hp.height / 2 - h / 2).coerceIn(0, maxOf(0, free))
+            } else {
+                free * Prefs.get(this@EdgeController, K.P_VPOS).coerceIn(0, 100) / 100
+            }
         }
         card.background = Style.panelBackground(ctx, right)
         card.setPadding(0, dp(Prefs.get(this, K.P_TOP).toFloat()).toInt(), 0, dp(16f).toInt())

@@ -115,4 +115,9 @@
     <string name="open_autolaunch">Open App info</string>
     <string name="need_host_title">One more step</string>
     <string name="need_host">Turn on Copy detection (recommended: no notification, starts by itself after a restart), or allow \"Display over other apps\".</string>
+    <string name="panel_height">Panel height</string>
+    <string name="panel_vpos">Panel position</string>
+    <string name="panel_vpos_desc">0% = top, 50% = centre, 100% = bottom.</string>
+    <string name="panel_follow">Follow handle position</string>
+    <string name="panel_follow_desc">The panel opens centred on the handle. Panel position is not used.</string>
 </resources>

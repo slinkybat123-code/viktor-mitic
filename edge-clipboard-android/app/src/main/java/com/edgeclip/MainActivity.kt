@@ -144,7 +144,10 @@ class MainActivity : Activity() {
         slider(c, R.string.blur, K.BLUR, 0, 80, "dp", desc = if (Build.VERSION.SDK_INT >= 31) 0 else R.string.blur_unsupported)
         slider(c, R.string.dim, K.DIM, 0, 90, "%")
         slider(c, R.string.panel_radius, K.P_RADIUS, 0, 48, "dp") { updatePreview() }
-        slider(c, R.string.panel_top, K.P_TOP, 0, 160, "dp")
+        slider(c, R.string.panel_height, K.P_HEIGHT, 20, 100, "%") { updatePreview() }
+        slider(c, R.string.panel_vpos, K.P_VPOS, 0, 100, "%", desc = R.string.panel_vpos_desc) { updatePreview() }
+        toggle(c, R.string.panel_follow, R.string.panel_follow_desc, K.P_FOLLOW) { updatePreview() }
+        slider(c, R.string.panel_top, K.P_TOP, 0, 160, "dp") { updatePreview() }
         slider(c, R.string.anim_speed, K.ANIM, 25, 300, "%", step = 5)
 
         // Cards
@@ -227,10 +230,14 @@ class MainActivity : Activity() {
         val col = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
             background = Style.panelBackground(ctx, true)
-            setPadding(dp(6), dp(14), dp(6), 0)
+            setPadding(dp(6), dp(Prefs.get(this@MainActivity, K.P_TOP).coerceAtMost(48)), dp(6), 0)
         }
         val w = dp(Prefs.get(this, K.P_WIDTH)).coerceAtMost(resources.displayMetrics.widthPixels - dp(48))
-        preview.addView(col, FrameLayout.LayoutParams(w, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.END))
+        // Same height and position as on the screen, scaled to the preview box.
+        val boxH = dp(300)
+        val h = boxH * Prefs.get(this, K.P_HEIGHT).coerceIn(20, 100) / 100
+        val top = if (Prefs.on(this, K.P_FOLLOW)) (boxH - h) * 3 / 10 else (boxH - h) * Prefs.get(this, K.P_VPOS) / 100
+        preview.addView(col, FrameLayout.LayoutParams(w, h, Gravity.END or Gravity.TOP).apply { topMargin = top })
         val look = Look.from(this)
         val samples = listOf(
             "<span style=\"color:#FF6B6B\">\$Sample-tag 123</span>",

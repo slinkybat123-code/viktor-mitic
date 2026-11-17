@@ -22,7 +22,7 @@ A floating edge handle that opens a clipboard history panel, in the style of the
 
 ## Settings (all adjustable in the app, with a live preview)
 - **Handle:** screen side, colour, width, height, opacity, distance from edge, swipe distance, hold time, tap to open, lock position, vibration.
-- **Panel:** theme (system, light, dark), width, opacity, background blur (Android 12+), background dim, corner radius, space at top, animation speed.
+- **Panel:** theme (system, light, dark), width, height, position (top to bottom) or follow the handle, opacity, background blur (Android 12+), background dim, corner radius, space at top, animation speed.
 - **Clips:** text size, preview lines, clip opacity, corner radius, space between clips, padding, Copy bar on or off, Copy bar height and text size, keep original colours, close after copy.
 - **Storage:** maximum clips (5–500) or no limit, auto-delete after 1 hour / 1 day / 7 days / 30 days, save images, storage location (app storage, plus an optional copy in a folder you choose), delete all clips, reset all settings.
 

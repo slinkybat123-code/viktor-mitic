@@ -9,7 +9,8 @@ enum class K(val key: String, val def: Int) {
     TAP_OPEN("tap", 0), SWIPE_DIST("swipe", 20), HOLD_MS("hold", 450), LOCK_POS("lock", 0), HAPTICS("hap", 1),
     // Panel
     THEME("theme", 0), P_WIDTH("pw", 184), P_ALPHA("pa", 72), BLUR("blur", 28), DIM("dim", 20),
-    P_RADIUS("pr", 28), P_TOP("ptop", 36), ANIM("anim", 100),
+    P_RADIUS("pr", 28), P_TOP("ptop", 16), ANIM("anim", 100),
+    P_HEIGHT("ph", 70), P_VPOS("pv", 50), P_FOLLOW("pfol", 0),
     // Cards
     TEXT_SP("tsp", 15), LINES("lines", 3), C_ALPHA("ca", 70), C_RADIUS("cr", 16), C_GAP("cg", 4),
     C_PAD("cp", 10), COPY_H("ch", 38), COPY_SP("csp", 14), SHOW_COPY("showcopy", 1),
