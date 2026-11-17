@@ -270,14 +270,15 @@ class EdgeService : Service() {
     }
 
     /**
-     * Swipe out from the edge (inward) = open. The pill follows the finger.
-     * Opens on a short swipe (20 dp), a fast flick, or at once after 56 dp.
-     * Touch and hold 0.45 s = drag mode; release snaps to the nearest edge.
+     * The panel follows the finger. Swipe out = it opens as far as you pull; swipe back = it closes.
+     * On release a spring finishes the movement, starting at the finger's speed.
+     * Touch and hold (no movement) = drag mode for the handle; release snaps to the nearest edge.
      */
     private inner class HandleTouch : View.OnTouchListener {
         private var downX = 0f; private var downY = 0f
         private var startX = 0; private var startY = 0
-        private var dragging = false; private var moved = false; private var opened = false
+        private var dragging = false; private var moved = false
+        private var pulling = false; private var pullBase = 0f; private var pullX = 0f; private var ticked = false
         private var vt: VelocityTracker? = null
         private val slop = ViewConfiguration.get(this@EdgeService).scaledTouchSlop
         private val longPress = Runnable {
@@ -289,14 +290,6 @@ class EdgeService : Service() {
 
         private fun inward(dx: Float) = if (Prefs.isRight(this@EdgeService)) -dx else dx
 
-        private fun open() {
-            if (opened) return
-            opened = true
-            ui.removeCallbacks(longPress)
-            haptic(HapticFeedbackConstants.VIRTUAL_KEY)
-            openPanel()
-        }
-
         @SuppressLint("ClickableViewAccessibility")
         override fun onTouch(v: View, e: MotionEvent): Boolean {
             vt?.addMovement(e.withRaw())
@@ -305,7 +298,7 @@ class EdgeService : Service() {
                     excludeSystemGesture(v)
                     vt?.recycle(); vt = VelocityTracker.obtain().also { it.addMovement(e.withRaw()) }
                     downX = e.rawX; downY = e.rawY; startX = hp.x; startY = hp.y
-                    dragging = false; moved = false; opened = false
+                    dragging = false; moved = false; pulling = false; ticked = false
                     snapAnim?.cancel()
                     if (!Prefs.on(this@EdgeService, K.LOCK_POS)) {
                         ui.postDelayed(longPress, Prefs.get(this@EdgeService, K.HOLD_MS).toLong())
@@ -319,40 +312,51 @@ class EdgeService : Service() {
                         hp.x = (startX + dx).toInt()
                         hp.y = (startY + dy).toInt()
                         wm.updateViewLayout(v, hp)
+                        return true
+                    }
+                    if (!moved && (abs(dx) > slop || abs(dy) > slop)) {
+                        moved = true
+                        ui.removeCallbacks(longPress)
+                    }
+                    val inw = inward(dx)
+                    if (!pulling && inw > slop && abs(dx) > abs(dy)) {
+                        // Start pulling the panel out with the finger.
+                        pulling = true
+                        pullX = e.rawX
+                        createPanel()
+                        progressAnim?.cancel()
+                        pullBase = progress
+                    }
+                    if (pulling) {
+                        setProgress(pullBase + inward(e.rawX - pullX) / travel)
+                        if (!ticked && progress > 0.5f) { ticked = true; haptic(HapticFeedbackConstants.CLOCK_TICK) }
+                        if (ticked && progress < 0.4f) ticked = false
                     } else {
-                        if (!moved && (abs(dx) > slop || abs(dy) > slop)) {
-                            moved = true
-                            ui.removeCallbacks(longPress)
-                        }
-                        val inw = inward(dx).coerceAtLeast(0f)
-                        // Rubber-band: pill follows the finger, with resistance.
+                        // Rubber-band before the pull starts.
                         val dir = if (Prefs.isRight(this@EdgeService)) -1f else 1f
-                        pill.translationX = dir * dp(14f) * (1f - 1f / (1f + inw / dp(40f)))
-                        val full = dp(Prefs.get(this@EdgeService, K.SWIPE_DIST) + 36f)
-                        if (!opened && inw > full && inw > abs(dy)) open()
+                        val r = inw.coerceAtLeast(0f)
+                        pill.translationX = dir * dp(14f) * (1f - 1f / (1f + r / dp(40f)))
                     }
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     ui.removeCallbacks(longPress)
-                    val dx = e.rawX - downX
-                    val dy = e.rawY - downY
                     vt?.computeCurrentVelocity(1000)
                     val vel = inward(vt?.xVelocity ?: 0f)
                     vt?.recycle(); vt = null
-                    if (dragging) {
-                        snapToEdge()
-                        springPillBack()
-                    } else {
-                        val inw = inward(dx)
-                        val horizontal = abs(dx) > abs(dy) * 0.8f
-                        val dist = dp(Prefs.get(this@EdgeService, K.SWIPE_DIST).toFloat())
-                        if (!opened && horizontal && (inw > dist || (inw > dp(6f) && vel > dp(450f)))) open()
-                        else if (!moved && e.actionMasked == MotionEvent.ACTION_UP) {
-                            v.performClick()
-                            if (Prefs.on(this@EdgeService, K.TAP_OPEN)) open() else { nudge(); return true }
+                    when {
+                        dragging -> snapToEdge()
+                        pulling -> {
+                            val pulled = progress * travel
+                            val need = minOf(travel * 0.5f, dp(Prefs.get(this@EdgeService, K.SWIPE_DIST) * 2.5f))
+                            val open = if (abs(vel) > dp(350f)) vel > 0 else pulled > need
+                            settle(open, vel / travel)
                         }
-                        springPillBack()
+                        !moved && e.actionMasked == MotionEvent.ACTION_UP -> {
+                            v.performClick()
+                            if (Prefs.on(this@EdgeService, K.TAP_OPEN)) openPanel() else { nudge(); return true }
+                        }
                     }
+                    springPillBack()
                 }
             }
             return true
@@ -368,30 +372,74 @@ class EdgeService : Service() {
     private var detailOpen = false
     private var animSpeed = 1f
 
+    // Open state: 0 = hidden, 1 = fully open. Finger and springs both drive it.
+    private var progress = 0f
+    private var progressAnim: SpringAnimation? = null
+    private var travel = 1f
+    private var panelCard: View? = null
+    private var panelScrim: View? = null
+    private var panelParams: WindowManager.LayoutParams? = null
+    private var blurMax = 0
+    private var lastBlur = -1
+
     private fun haptic(type: Int) {
         if (Prefs.on(this, K.HAPTICS)) (panel ?: handleRoot)?.performHapticFeedback(type)
     }
 
-    /** Animates the background blur behind the panel (Android 12+). */
-    private fun animateBlur(root: View, p: WindowManager.LayoutParams, from: Int, to: Int, ms: Long) {
-        if (Build.VERSION.SDK_INT < 31) return
-        android.animation.ValueAnimator.ofInt(from, to).apply {
-            duration = ms
-            addUpdateListener {
-                p.blurBehindRadius = it.animatedValue as Int
-                if (root.isAttachedToWindow) runCatching { wm.updateViewLayout(root, p) }
+    /** Places every moving part for open state [f] (0..1). */
+    private fun setProgress(f: Float) {
+        val root = panel ?: return
+        progress = f.coerceIn(0f, 1f)
+        val p = progress
+        val sign = if (Prefs.isRight(this)) 1f else -1f
+        panelCard?.translationX = travel * (1f - p) * sign
+        panelScrim?.alpha = p
+        handleRoot?.alpha = 1f - p
+        val lp = panelParams
+        if (Build.VERSION.SDK_INT >= 31 && blurMax > 0 && lp != null) {
+            val b = (blurMax * p).toInt()
+            if (abs(b - lastBlur) >= 2 || (b == 0 && lastBlur != 0) || (b == blurMax && lastBlur != blurMax)) {
+                lastBlur = b
+                lp.blurBehindRadius = b
+                if (root.isAttachedToWindow) runCatching { wm.updateViewLayout(root, lp) }
             }
+        }
+    }
+
+    /** Springs to open (true) or closed (false). [velocity] is in open-state units per second. */
+    private fun settle(open: Boolean, velocity: Float = 0f) {
+        if (panel == null) return
+        progressAnim?.cancel()
+        progressAnim = SpringAnimation(FloatValueHolder(progress)).apply {
+            spring = SpringForce(if (open) 1f else 0f)
+                .setStiffness(380f * animSpeed * animSpeed)
+                .setDampingRatio(if (open) 0.85f else 1f)
+            setMinimumVisibleChange(DynamicAnimation.MIN_VISIBLE_CHANGE_SCALE)
+            setStartVelocity(velocity)
+            addUpdateListener { _, v, _ -> setProgress(v) }
+            addEndListener { _, canceled, _, _ -> if (!canceled && !open) removePanel() }
             start()
         }
     }
 
     private fun openPanel() {
+        if (handleRoot == null) return
+        createPanel()
+        settle(true)
+    }
+
+    private fun closePanel(animate: Boolean = true) {
+        if (panel == null) return
+        if (animate) settle(false) else removePanel()
+    }
+
+    /** Builds the panel window in the hidden state (progress 0). Does nothing if it exists. */
+    private fun createPanel() {
         if (panel != null || handleRoot == null) return
         ClipStore.prune()
         val ctx = Style.themed(this)
-        val root = LayoutInflater.from(ctx).inflate(R.layout.panel, null) as FrameLayout
-        val speed = Prefs.get(this, K.ANIM).coerceIn(25, 300) / 100f
-        animSpeed = speed
+        val root = LayoutInflater.from(ctx).inflate(R.layout.panel, null) as SwipeFrame
+        animSpeed = Prefs.get(this, K.ANIM).coerceIn(25, 300) / 100f
         val scrim = root.findViewById<View>(R.id.scrim)
         val card = root.findViewById<View>(R.id.card)
         val listPage = root.findViewById<View>(R.id.list_page)
@@ -401,9 +449,11 @@ class EdgeService : Service() {
         val right = Prefs.isRight(this)
         detailOpen = false
 
+        val cardW = dp(Prefs.get(this, K.P_WIDTH).toFloat())
+        travel = cardW + dp(24f)
         (card.layoutParams as FrameLayout.LayoutParams).apply {
             gravity = if (right) Gravity.END else Gravity.START
-            width = dp(Prefs.get(this@EdgeService, K.P_WIDTH).toFloat()).toInt()
+            width = cardW.toInt()
         }
         card.background = Style.panelBackground(ctx, right)
         card.setPadding(0, dp(Prefs.get(this, K.P_TOP).toFloat()).toInt(), 0, dp(16f).toInt())
@@ -418,7 +468,6 @@ class EdgeService : Service() {
         )
         list.layoutManager = LinearLayoutManager(ctx)
         list.adapter = adapter
-
         val render = {
             val items = ClipStore.all()
             adapter.submitList(items)
@@ -441,6 +490,16 @@ class EdgeService : Service() {
         // A focused window may read the clipboard: catch anything copied since the last check.
         root.viewTreeObserver.addOnWindowFocusChangeListener { has -> if (has) readClipboard() }
 
+        // Push the panel back toward the edge with a finger to close it.
+        var dragBase = 0f
+        root.edgeSign = if (right) 1f else -1f
+        root.onDragStart = { progressAnim?.cancel(); dragBase = progress }
+        root.onDrag = { out -> setProgress(dragBase - out / travel) }
+        root.onDragEnd = { v ->
+            val open = if (abs(v) > dp(350f)) v < 0 else progress > 0.5f
+            settle(open, -v / travel)
+        }
+
         val p = WindowManager.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, overlayType,
             WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
@@ -450,29 +509,34 @@ class EdgeService : Service() {
             p.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
         }
         val blur = dp(Prefs.get(this, K.BLUR).toFloat()).toInt()
-        val canBlur = Build.VERSION.SDK_INT >= 31 && blur > 0 && wm.isCrossWindowBlurEnabled
-        if (canBlur) p.flags = p.flags or WindowManager.LayoutParams.FLAG_BLUR_BEHIND
-        wm.addView(root, p)
-        if (canBlur) animateBlur(root, p, 0, blur, (260 / speed).toLong())
-        panel = root
-        root.requestFocus()
-
+        blurMax = if (Build.VERSION.SDK_INT >= 31 && blur > 0 && wm.isCrossWindowBlurEnabled) blur else 0
+        if (blurMax > 0) p.flags = p.flags or WindowManager.LayoutParams.FLAG_BLUR_BEHIND
+        lastBlur = -1
+        panelParams = p
+        panelCard = card
+        panelScrim = scrim
         listPage.visibility = View.VISIBLE
         detailPage.visibility = View.GONE
-        scrim.alpha = 0f
-        scrim.animate().alpha(1f).setDuration((240 / speed).toLong()).start()
-        card.alpha = 0f
-        card.post {
-            card.translationX = (card.width + dp(32f)) * if (right) 1f else -1f
-            card.alpha = 1f
-            SpringAnimation(card, DynamicAnimation.TRANSLATION_X, 0f).apply {
-                spring.stiffness = 520f * speed * speed
-                spring.dampingRatio = 0.78f
-                start()
-            }
-            list.scheduleLayoutAnimation()
-        }
-        handleRoot?.animate()?.alpha(0f)?.setDuration(120)?.start()
+
+        panel = root
+        progress = 0f
+        setProgress(0f)
+        wm.addView(root, p)
+        root.requestFocus()
+        list.scheduleLayoutAnimation()
+    }
+
+    private fun removePanel() {
+        val root = panel ?: return
+        progressAnim?.cancel()
+        progressAnim = null
+        panel = null
+        panelCard = null; panelScrim = null; panelParams = null
+        panelListener?.let { ClipStore.removeListener(it) }
+        panelListener = null
+        progress = 0f
+        handleRoot?.alpha = 1f
+        if (root.isAttachedToWindow) runCatching { wm.removeView(root) }
     }
 
     /** Full clip view inside the panel. */
@@ -522,30 +586,6 @@ class EdgeService : Service() {
         listPage.animate().translationX(0f).alpha(1f).setDuration(260).setInterpolator(DecelerateInterpolator(2f)).start()
         page.animate().translationX(w * 0.35f).alpha(0f).setDuration(200)
             .withEndAction { page.visibility = View.GONE; root.findViewById<TextView>(R.id.detail_text).text = "" }.start()
-    }
-
-    private fun closePanel(animate: Boolean = true) {
-        val root = panel ?: return
-        panel = null
-        panelListener?.let { ClipStore.removeListener(it) }
-        panelListener = null
-        handleRoot?.animate()?.alpha(1f)?.setDuration(220)?.start()
-        val remove = { if (root.isAttachedToWindow) runCatching { wm.removeView(root) } }
-        if (!animate) { remove(); return }
-        val card = root.findViewById<View>(R.id.card)
-        val right = Prefs.isRight(this)
-        val d = (200 / animSpeed).toLong()
-        val lp = root.layoutParams as? WindowManager.LayoutParams
-        if (lp != null && lp.flags and WindowManager.LayoutParams.FLAG_BLUR_BEHIND != 0 && Build.VERSION.SDK_INT >= 31) {
-            animateBlur(root, lp, lp.blurBehindRadius, 0, d)
-        }
-        root.findViewById<View>(R.id.scrim).animate().alpha(0f).setDuration(d).start()
-        card.animate()
-            .translationX((card.width + dp(32f)) * if (right) 1f else -1f)
-            .setInterpolator(AccelerateInterpolator(1.5f))
-            .setDuration(d)
-            .withEndAction { remove() }
-            .start()
     }
 
     /** Puts a clip back on the system clipboard. */

@@ -4,7 +4,9 @@ A floating edge handle that opens a clipboard history panel, in the style of the
 
 ## Features
 - Thin rounded handle on the screen edge. Default size 7 × 72 dp (about the size of the Find X9 Pro volume rocker). Width, height, opacity and distance from the edge are adjustable.
-- Swipe out from the handle to open the panel. The handle follows your finger. A short swipe (20 dp) or a fast flick opens it. A tap only makes the handle bounce.
+- The panel follows your finger. Swipe out slowly and it opens as far as you pull. Swipe back and it goes back. Release past the halfway point (or the set swipe distance) and it springs open. A quick flick opens or closes it at once, with the speed of your flick.
+- When the panel is open, push it toward the edge with your finger to close it. Vertical scrolling in the list still works.
+- A tap on the handle only makes it bounce (unless "Tap to open" is on).
 - The handle asks Android to exclude its area from the system back gesture (Android 10+). If ColorOS still takes the swipe, increase "Distance from edge".
 - One UI style panel: a full-height column on the edge, large previews, a full-width **Copy** bar under each preview, and a **Clear** pill at the bottom.
 - Tap a preview to see the full clip (scrollable, selectable text, or the full image), with a Copy bar.
@@ -51,7 +53,8 @@ Without copy detection, only the last item you copied before you opened the pane
 
 ## On-device test list
 - [ ] Handle shows on the right edge with the correct size.
-- [ ] Swipe out opens the panel. A tap does not. The system back gesture does not start.
+- [ ] Slow swipe: the panel follows the finger. Swipe back: it closes. Quick flick: it opens at once. A tap does not open it.
+- [ ] With the panel open, push it toward the edge: it follows and closes. The system back gesture does not start.
 - [ ] Back and tap outside close the panel. Back in the full clip view goes back to the list.
 - [ ] Copy an image in Gallery or Chrome. It shows in the panel and pastes into a chat.
 - [ ] Copy coloured text. The colours show in the preview.
