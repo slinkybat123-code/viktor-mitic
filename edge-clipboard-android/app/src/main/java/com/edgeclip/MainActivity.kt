@@ -49,7 +49,7 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
         mainToggle.isChecked = Prefs.enabled(this) && Settings.canDrawOverlays(this)
-        if (mainToggle.isChecked && !EdgeService.running) EdgeService.start(this)
+        Autostart.ensureRunning(this)
         buildPermissions()
         updatePreview()
     }
@@ -72,7 +72,13 @@ class MainActivity : Activity() {
                     isChecked = false; openOverlaySettings(); return@setOnCheckedChangeListener
                 }
                 Prefs.setEnabled(this@MainActivity, on)
-                if (on) EdgeService.start(this@MainActivity) else EdgeService.stop(this@MainActivity)
+                if (on) {
+                    EdgeService.start(this@MainActivity)
+                    if (Prefs.on(this@MainActivity, K.AUTOSTART)) Autostart.scheduleWatchdog(this@MainActivity)
+                } else {
+                    EdgeService.stop(this@MainActivity)
+                    Autostart.cancelWatchdog(this@MainActivity)
+                }
             }
         }
         top.addView(mainToggle)
@@ -95,6 +101,15 @@ class MainActivity : Activity() {
 
         section(R.string.permissions)
         permCard = card()
+
+        section(R.string.sec_startup)
+        val sc = card()
+        toggle(sc, R.string.autostart, R.string.autostart_desc, K.AUTOSTART) {
+            if (Prefs.on(this, K.AUTOSTART)) Autostart.scheduleWatchdog(this) else Autostart.cancelWatchdog(this)
+        }
+        row(sc, R.string.autolaunch, R.string.autolaunch_desc)
+        sc.addView(textButton(getString(R.string.open_autolaunch)) { Autostart.openAutoLaunchSettings(this) }
+            .apply { (layoutParams as LinearLayout.LayoutParams).marginStart = dp(8) })
 
         // Handle
         section(R.string.sec_handle)

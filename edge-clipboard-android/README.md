@@ -28,6 +28,15 @@ A floating edge handle that opens a clipboard history panel, in the style of the
 
 See `PUBLISHING.md` to publish on Google Play and `PRIVACY.md` for the privacy policy.
 
+## Start-up and memory
+- Everything is saved to storage at once: clips, images, pins, all settings, handle side and position, on/off state, and the list scroll position. After a restart, the panel opens at the same place.
+- After a phone restart or an app update, the handle starts by itself ("Start after phone restart", on by default). Four ways start it:
+  1. Boot receiver (boot completed, quick boot, user unlocked, app updated).
+  2. The Copy detection accessibility service. Android restarts it after a reboot, and it starts the handle.
+  3. A watchdog job every 15 minutes. It survives restarts and starts the handle again if the system stopped it.
+  4. The foreground service restarts itself if the system kills it.
+- On Oppo / ColorOS, allow **Auto launch** for the app (Settings > Start-up > Open auto launch settings). Without it, ColorOS can block points 1 and 3.
+
 ## Install the APK
 1. Copy `release/EdgeClip-debug.apk` to the phone and open it. Allow "Install unknown apps" if asked.
 2. Open One UI Clipboard and turn on each permission row.
@@ -63,4 +72,5 @@ Without copy detection, only the last item you copied before you opened the pane
 - [ ] Copy text in Chrome or WhatsApp. The clip shows in the panel.
 - [ ] Copy 31 clips. Only 30 stay. Pinned clips stay.
 - [ ] Rotation repositions the handle.
-- [ ] Handle comes back after a phone restart.
+- [ ] Restart the phone. The handle comes back without opening the app. Clips, pins, settings and scroll position are the same.
+- [ ] Force-stop the app in Settings, then wait up to 15 minutes or open the app. The handle comes back.

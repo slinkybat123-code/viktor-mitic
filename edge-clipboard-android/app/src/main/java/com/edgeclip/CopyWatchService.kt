@@ -35,5 +35,11 @@ class CopyWatchService : AccessibilityService() {
         }, 200)
     }
 
+    /** The system restarts enabled accessibility services after a reboot: use that to start the handle too. */
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        if (Prefs.on(this, K.AUTOSTART)) Autostart.ensureRunning(this)
+    }
+
     override fun onInterrupt() {}
 }

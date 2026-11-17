@@ -101,6 +101,7 @@ class EdgeService : Service() {
         ClipStore.init(this)
         goForeground()
         running = true
+        if (Prefs.on(this, K.AUTOSTART)) Autostart.scheduleWatchdog(this)
         cm.addPrimaryClipChangedListener(clipListener)
         if (android.provider.Settings.canDrawOverlays(this)) addHandle() else stopSelf()
     }
@@ -111,7 +112,7 @@ class EdgeService : Service() {
             ACTION_REFRESH -> applyHandleLayout()
             ACTION_GRAB -> grabClipboard()
             ACTION_OPEN -> openPanel()
-            ACTION_STOP -> { Prefs.setEnabled(this, false); stopSelf() }
+            ACTION_STOP -> { Prefs.setEnabled(this, false); Autostart.cancelWatchdog(this); stopSelf() }
         }
         return START_STICKY
     }
@@ -474,6 +475,9 @@ class EdgeService : Service() {
             empty.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
         }
         render()
+        Prefs.scroll(this).let { (pos, off) ->
+            (list.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(pos, off)
+        }
         panelListener = render
         ClipStore.addListener(render)
 
@@ -531,6 +535,13 @@ class EdgeService : Service() {
         progressAnim?.cancel()
         progressAnim = null
         panel = null
+        root.findViewById<RecyclerView>(R.id.list)?.let { list ->
+            val lm = list.layoutManager as? LinearLayoutManager
+            val pos = lm?.findFirstVisibleItemPosition() ?: RecyclerView.NO_POSITION
+            if (pos != RecyclerView.NO_POSITION) {
+                Prefs.setScroll(this, pos, lm!!.findViewByPosition(pos)?.top?.minus(list.paddingTop) ?: 0)
+            }
+        }
         panelCard = null; panelScrim = null; panelParams = null
         panelListener?.let { ClipStore.removeListener(it) }
         panelListener = null

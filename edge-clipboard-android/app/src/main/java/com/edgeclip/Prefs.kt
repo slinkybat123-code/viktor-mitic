@@ -15,6 +15,7 @@ enum class K(val key: String, val def: Int) {
     C_PAD("cp", 10), COPY_H("ch", 38), COPY_SP("csp", 14), SHOW_COPY("showcopy", 1),
     SOURCE_COLORS("srccol", 1), CLOSE_AFTER_COPY("close", 1),
     // Storage
+    AUTOSTART("autostart", 1),
     MAX_CLIPS("max", 30), UNLIMITED("unl", 0), AUTO_DELETE("autodel", 0), SAVE_IMAGES("img", 1),
 }
 
@@ -33,6 +34,11 @@ object Prefs {
 
     fun y(c: Context) = sp(c).getInt("y", -1)
     fun setY(c: Context, v: Int) = sp(c).edit().putInt("y", v).apply()
+
+    /** Last list scroll position, so the panel reopens where you left it (also after a restart). */
+    fun scroll(c: Context) = sp(c).getInt("scrollPos", 0) to sp(c).getInt("scrollOff", 0)
+    fun setScroll(c: Context, pos: Int, off: Int) =
+        sp(c).edit().putInt("scrollPos", pos).putInt("scrollOff", off).apply()
 
     /** Folder (SAF tree URI) that receives a copy of all clips, or null for app storage only. */
     fun folder(c: Context): String? = sp(c).getString("folder", null)

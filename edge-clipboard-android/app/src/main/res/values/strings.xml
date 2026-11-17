@@ -107,4 +107,10 @@
     <string name="a11y_disclosure">One UI Clipboard uses the Android Accessibility Service API to detect when you tap \"Copy\" or when a \"Copied\" message shows in other apps. It then reads the clipboard once and saves the clip on this phone.\n\nThe service does not read screen content, does not record what you type, and sends no data off the phone. Clips stay in app storage and, if you choose one, in your selected folder.\n\nYou can turn this off at any time in Accessibility settings.</string>
     <string name="agree">Agree</string>
     <string name="no_thanks">No thanks</string>
+    <string name="sec_startup">Start-up</string>
+    <string name="autostart">Start after phone restart</string>
+    <string name="autostart_desc">Shows the handle again after a restart or an app update. Your clips, settings and handle position are always saved.</string>
+    <string name="autolaunch">Auto launch (Oppo / ColorOS)</string>
+    <string name="autolaunch_desc">ColorOS blocks apps from starting after a restart until you allow \"Auto launch\". Turn on One UI Clipboard in that list.</string>
+    <string name="open_autolaunch">Open auto launch settings</string>
 </resources>
