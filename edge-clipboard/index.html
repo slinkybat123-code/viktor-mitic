@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Edge Clipboard</title>
+<style>
+:root{--bg:#f2f2f6;--panel:rgba(250,250,252,.86);--card:#fff;--text:#111;--sub:#6b6b72;--accent:#3e91ff;--line:rgba(0,0,0,.08)}
+@media (prefers-color-scheme:dark){:root{--bg:#000;--panel:rgba(28,28,30,.86);--card:#2c2c2e;--text:#f5f5f7;--sub:#9a9aa0;--line:rgba(255,255,255,.1)}}
+*{box-sizing:border-box;margin:0;font-family:"Segoe UI",Roboto,system-ui,sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden}
+main{padding:40px 16px;max-width:560px}
+h1{font-size:28px;font-weight:600;margin-bottom:8px}
+p{color:var(--sub);line-height:1.5;margin-bottom:16px}
+textarea{width:100%;height:120px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--text);padding:14px;font-size:15px;resize:none}
+.btn{margin-top:10px;border:0;border-radius:20px;padding:10px 18px;background:var(--accent);color:#fff;font-size:15px;cursor:pointer}
+#handle{position:fixed;right:0;top:30%;width:8px;height:110px;border-radius:8px 0 0 8px;background:rgba(150,150,160,.55);cursor:pointer;touch-action:none;transition:width .15s}
+#handle:hover{width:12px}
+#scrim{position:fixed;inset:0;background:rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s}
+#panel{position:fixed;top:50%;right:12px;width:300px;max-width:calc(100vw - 24px);height:78vh;transform:translate(110%,-50%);
+ background:var(--panel);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:28px;box-shadow:0 10px 40px rgba(0,0,0,.25);
+ transition:transform .32s cubic-bezier(.2,.9,.3,1);display:flex;flex-direction:column;padding:18px 12px 12px}
+.open #panel{transform:translate(0,-50%)}.open #scrim{opacity:1;pointer-events:auto}
+header{display:flex;align-items:center;justify-content:space-between;padding:0 6px 12px}
+header h2{font-size:18px;font-weight:600}
+header button{background:none;border:0;color:var(--accent);font-size:14px;cursor:pointer}
+#list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.item{background:var(--card);border-radius:18px;padding:12px 14px;cursor:pointer;position:relative;transition:transform .1s}
+.item:active{transform:scale(.97)}
+.item .t{font-size:14px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.item .m{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12px;color:var(--sub)}
+.item .acts button{background:none;border:0;color:var(--sub);font-size:15px;cursor:pointer;padding:2px 5px}
+.item.pinned{outline:2px solid var(--accent)}
+.empty{color:var(--sub);text-align:center;margin-top:40px;font-size:14px}
+#toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(30px);opacity:0;background:rgba(50,50,55,.92);color:#fff;padding:10px 18px;border-radius:20px;font-size:14px;transition:.25s;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<main>
+ <h1>Edge Clipboard</h1>
+ <p>Copy any text on this page (Ctrl+C), or type below and select "Copy". Swipe the handle on the right edge, or click it, to open the clipboard panel. Click a clip to copy it again.</p>
+ <textarea id="src" placeholder="Type text here…"></textarea>
+ <button class="btn" id="copyBtn">Copy</button>
+</main>
+
+<div id="handle" title="Open clipboard"></div>
+<div id="scrim"></div>
+<aside id="panel" aria-label="Clipboard">
+ <header><h2>Clipboard</h2><button id="clear">Clear all</button></header>
+ <div id="list"></div>
+</aside>
+<div id="toast"></div>
+
+<script>
+const KEY='edgeClips', list=document.getElementById('list');
+let clips=[];
+try{clips=JSON.parse(localStorage.getItem(KEY))||[]}catch{}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(clips))}catch{}};
+const ago=t=>{const s=(Date.now()-t)/1000;return s<60?'Just now':s<3600?Math.floor(s/60)+' min ago':s<86400?Math.floor(s/3600)+' h ago':new Date(t).toLocaleDateString()};
+const toast=m=>{const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),1400)};
+
+function add(text){
+ text=text.trim(); if(!text) return;
+ const old=clips.find(c=>c.text===text);
+ clips=clips.filter(c=>c.text!==text);
+ clips.unshift({text,time:Date.now(),pinned:old?.pinned||false});
+ const pins=clips.filter(c=>c.pinned), rest=clips.filter(c=>!c.pinned).slice(0,20);
+ clips=[...pins,...rest]; save(); render();
+}
+function render(){
+ clips.sort((a,b)=>(b.pinned-a.pinned)||(b.time-a.time));
+ list.innerHTML=clips.length?'':'<div class="empty">No clips yet.<br>Copied text shows here.</div>';
+ clips.forEach((c,i)=>{
+  const d=document.createElement('div'); d.className='item'+(c.pinned?' pinned':'');
+  d.innerHTML=`<div class="t"></div><div class="m"><span>${c.pinned?'📌 ':''}${ago(c.time)}</span><span class="acts"><button data-a="pin" title="Pin">📌</button><button data-a="del" title="Delete">✕</button></span></div>`;
+  d.querySelector('.t').textContent=c.text;
+  d.onclick=e=>{
+   const a=e.target.dataset.a;
+   if(a==='pin'){c.pinned=!c.pinned;save();render();return}
+   if(a==='del'){clips.splice(i,1);save();render();return}
+   navigator.clipboard?.writeText(c.text).then(()=>toast('Copied to clipboard'),()=>toast('Copy blocked by browser'));
+  };
+  list.appendChild(d);
+ });
+}
+document.addEventListener('copy',()=>setTimeout(()=>{const s=String(getSelection());if(s)add(s)},0));
+document.getElementById('copyBtn').onclick=()=>{const v=src.value;add(v);navigator.clipboard?.writeText(v).catch(()=>{});toast('Copied');};
+document.getElementById('clear').onclick=()=>{clips=clips.filter(c=>c.pinned);save();render()};
+
+const open=v=>{document.body.classList.toggle('open',v);if(v)render()};
+const h=document.getElementById('handle');
+let sx=null;
+h.addEventListener('pointerdown',e=>{sx=e.clientX;h.setPointerCapture(e.pointerId)});
+h.addEventListener('pointerup',e=>{if(sx!==null&&(sx-e.clientX>20||Math.abs(sx-e.clientX)<5))open(true);sx=null});
+document.getElementById('scrim').onclick=()=>open(false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')open(false)});
+render();
+</script>
+</body>
+</html>
