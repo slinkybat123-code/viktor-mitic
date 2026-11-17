@@ -43,6 +43,7 @@ class MainActivity : Activity() {
 
         slider(R.id.width_bar, R.id.width_value, 3, 16, Prefs.widthDp(this), "dp") { Prefs.setWidthDp(this, it) }
         slider(R.id.height_bar, R.id.height_value, 40, 160, Prefs.heightDp(this), "dp") { Prefs.setHeightDp(this, it) }
+        slider(R.id.gap_bar, R.id.gap_value, 0, 28, Prefs.gapDp(this), "dp") { Prefs.setGapDp(this, it) }
         slider(R.id.alpha_bar, R.id.alpha_value, 20, 100, Prefs.alpha(this), "%") { Prefs.setAlpha(this, it) }
 
         findViewById<Button>(R.id.open_panel).setOnClickListener {
@@ -53,7 +54,7 @@ class MainActivity : Activity() {
             } else openOverlaySettings()
         }
         findViewById<Button>(R.id.reset_size).setOnClickListener {
-            Prefs.setWidthDp(this, 7); Prefs.setHeightDp(this, 72); Prefs.setAlpha(this, 65)
+            Prefs.setWidthDp(this, 7); Prefs.setHeightDp(this, 72); Prefs.setAlpha(this, 65); Prefs.setGapDp(this, 0)
             recreate()
             refreshHandle()
         }

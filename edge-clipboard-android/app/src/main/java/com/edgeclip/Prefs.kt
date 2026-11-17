@@ -24,4 +24,8 @@ object Prefs {
     /** Opacity in percent. */
     fun alpha(c: Context) = sp(c).getInt("a", 65)
     fun setAlpha(c: Context, v: Int) = sp(c).edit().putInt("a", v).apply()
+
+    /** Distance in dp from the screen edge. Moves the handle out of the system back-gesture zone. */
+    fun gapDp(c: Context) = sp(c).getInt("gap", 0)
+    fun setGapDp(c: Context, v: Int) = sp(c).edit().putInt("gap", v).apply()
 }
