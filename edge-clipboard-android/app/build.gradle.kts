@@ -16,7 +16,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.edgeclip"
+        applicationId = "io.github.slinkybat123.edgeclip"
         minSdk = 26
         targetSdk = 36
         versionCode = 6

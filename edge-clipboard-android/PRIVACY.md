@@ -1,4 +1,4 @@
-# Privacy policy — One UI Clipboard
+# Privacy policy — Edge Clipboard
 
 Last update: 17 November 2026
 
@@ -18,4 +18,4 @@ Last update: 17 November 2026
 - Uninstall the app to delete all app data. Delete the chosen folder yourself if you used one.
 
 ## Contact
-<add your support email here>
+slinkybat123@gmail.com

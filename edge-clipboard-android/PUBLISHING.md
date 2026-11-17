@@ -1,46 +1,153 @@
-# Publishing to Google Play
+# Publish Edge Clipboard on Google Play
 
-I (Claude) did not sign or upload the app. You do the steps below yourself, because they need your signing key and your developer account.
+Claude prepared the app, the store texts, the graphics, the privacy policy and a build workflow. You do the steps that need your own key and your own Google account. Do the steps in this order.
 
-## 0. App name and trademark — read first
-"One UI" is a Samsung trademark. Google Play can reject or remove an app whose name or icon uses another company's trademark (Impersonation and Intellectual Property policies). Samsung can also send a takedown.
-- Safe option: publish under a neutral name, for example "Edge Clip — Clipboard Panel", and describe it as "in the style of the Samsung edge panel" only in the description, not in the name or icon.
-- To change the name: edit `app_name` in `app/src/main/res/values/strings.xml`.
+| Item | Value |
+|---|---|
+| App name | Edge Clipboard |
+| Package ID | `io.github.slinkybat123.edgeclip` (permanent after the first upload) |
+| Contact email | slinkybat123@gmail.com |
+| Store texts | `store/listing.md` |
+| Icon 512 × 512 | `store/icon-512.png` |
+| Feature graphic 1024 × 500 | `store/feature-graphic.png` |
+| Privacy policy | `docs/privacy.html` (repository root) |
 
-## 1. Change the package name (recommended)
-`com.edgeclip` can be taken. In `app/build.gradle.kts`, change `applicationId` to a name you own, for example `com.<yourname>.edgeclip`. You cannot change it after the first upload.
+---
 
-## 2. Create the upload key (one time — keep it safe)
+## Step 1. Create a Google Play developer account
+1. Go to https://play.google.com/console/signup.
+2. Select **Yourself** (personal account).
+3. Pay the one-time USD 25 fee and complete identity verification. Verification can take a few days.
+
+## Step 2. Create the upload key (one time — keep it safe)
+If you lose this key or its password, you cannot update the app without a reset request to Google.
+
+On Windows, install a JDK first if you do not have one: Eclipse Temurin 17 from https://adoptium.net. Install it to `E:\CLAUDE\Java\jdk-17`.
+
+Open **Command Prompt** and run:
 ```
-keytool -genkeypair -v -keystore upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+mkdir E:\CLAUDE\keys
+"E:\CLAUDE\Java\jdk-17\bin\keytool" -genkeypair -v -keystore E:\CLAUDE\keys\edge-clipboard-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
 ```
-Put `upload.jks` in a safe place (not in Git). Create `keystore.properties` next to `settings.gradle.kts`:
-```
-storeFile=E:/CLAUDE/keys/upload.jks
-storePassword=...
-keyAlias=upload
-keyPassword=...
-```
-`keystore.properties` and `*.jks` are in `.gitignore`.
+- Enter a strong password two times. Write it down in your password manager.
+- For name and organisation questions, you can type your name and press Enter for the rest.
+- Make a backup copy of `edge-clipboard-upload.jks` (for example on a USB stick).
 
-## 3. Build the App Bundle
-```
-gradlew bundleRelease
-```
-Output: `app/build/outputs/bundle/release/app-release.aab`. Install the release on your phone once before upload (`gradlew installRelease`) to check that R8 shrinking did not break anything.
+Never upload the `.jks` file or the password to GitHub as a file.
 
-## 4. Play Console
-1. Create the app. Pay the one-time $25 developer fee if you have no account.
-2. **Privacy policy:** host `PRIVACY.md` on a public page (for example GitHub Pages) and enter the URL.
-3. **Data safety:** "No data collected" and "No data shared" (all data stays on the device and the app has no internet permission).
-4. **App access:** say that no login is necessary.
-5. **Permissions declarations:**
-   - **Accessibility API:** declare the use. Say it detects copy actions to save clipboard history and shows the edge handle and clipboard panel as an accessibility overlay, it is not an accessibility tool, and the app shows a disclosure and asks for consent first (already built in). Upload a short video of the disclosure and the feature.
-   - **Foreground service (special use):** say it keeps the floating edge handle visible so the user can open clipboard history at any time.
-   - **Display over other apps:** no form, but say it in the description.
-6. **Store listing:** short description, full description, icon 512 × 512 (`store/icon-512.png`), feature graphic 1024 × 500, at least 2 phone screenshots.
-7. **Testing:** new personal developer accounts must run a closed test with at least 12 testers for 14 days before production.
-8. Upload the `.aab` to the testing track, then to production.
+## Step 3. Build the signed bundle (.aab)
+Choose **one** method.
 
-## 5. Each update
-Increase `versionCode` (and `versionName`) in `app/build.gradle.kts`, then build and upload a new bundle.
+### Method A — GitHub builds it (no Android Studio)
+1. Merge branch `ccr-5689f8ec-uzuypg` into `main` (GitHub > Pull requests > New pull request > Merge). The build button shows only for workflows on `main`.
+2. Convert the key to text. In **PowerShell**:
+   ```
+   [Convert]::ToBase64String([IO.File]::ReadAllBytes("E:\CLAUDE\keys\edge-clipboard-upload.jks")) | Set-Clipboard
+   ```
+3. GitHub > repository **Settings > Secrets and variables > Actions > New repository secret**. Add 4 secrets:
+   | Name | Value |
+   |---|---|
+   | `KEYSTORE_BASE64` | Paste (the text from step 2) |
+   | `KEYSTORE_PASSWORD` | Your key store password |
+   | `KEY_ALIAS` | `upload` |
+   | `KEY_PASSWORD` | Your key password (the same as the store password if you did not set another) |
+4. GitHub > **Actions > Edge Clipboard release bundle > Run workflow**.
+5. When the run is green, open it and download **edge-clipboard-release-aab**. Unzip it: you get `app-release.aab`.
+
+### Method B — Build on your PC
+1. Install Android Studio to `E:\CLAUDE\Android Studio`, with the SDK in `E:\CLAUDE\Android\Sdk`.
+2. Open the folder `edge-clipboard-android`.
+3. Create `keystore.properties` next to `settings.gradle.kts`:
+   ```
+   storeFile=E:/CLAUDE/keys/edge-clipboard-upload.jks
+   storePassword=YOUR_PASSWORD
+   keyAlias=upload
+   keyPassword=YOUR_PASSWORD
+   ```
+4. In the Android Studio terminal: `gradlew bundleRelease`
+5. Output: `app\build\outputs\bundle\release\app-release.aab`.
+
+Before you upload, install the release build on your phone once (`gradlew installRelease` with USB debugging on) and check that everything works.
+
+## Step 4. Create the app in Play Console
+1. Play Console > **Create app**.
+2. App name: **Edge Clipboard**. Default language: English (United States). App. Free.
+3. Accept the declarations, then select **Create app**.
+
+## Step 5. Privacy policy URL
+The repository is public, so this link works after the merge in step 3A:
+```
+https://github.com/slinkybat123-code/viktor-mitic/blob/main/docs/privacy.html
+```
+A cleaner link with GitHub Pages: repository **Settings > Pages > Source: Deploy from a branch > main / docs > Save**. After a few minutes the policy is at:
+```
+https://slinkybat123-code.github.io/viktor-mitic/privacy.html
+```
+Enter the URL in Play Console > **Policy and programs > App content > Privacy policy**.
+
+## Step 6. Take screenshots on your phone
+Google needs 2 to 8 phone screenshots (real screens, not mock-ups). Take these:
+1. The panel open over the home screen, with some clips.
+2. The full clip view (tap a preview).
+3. A clip with an image.
+4. The settings screen with the live preview.
+5. The handle on the edge, with the panel half open (swipe slowly and take the screenshot with the other hand, or use the power + volume down keys).
+
+## Step 7. Store listing
+Play Console > **Grow users > Store presence > Main store listing**. Copy the texts from `store/listing.md`. Upload `store/icon-512.png`, `store/feature-graphic.png` and the screenshots.
+
+## Step 8. App content forms
+Play Console > **Policy and programs > App content**. Use these answers:
+
+**Ads:** No, the app has no ads.
+
+**App access:** All functionality is available without special access.
+
+**Content rating:** Start the questionnaire. Category: **Utility, Productivity, Communication, or Other**. Answer **No** to all content questions. The expected result is "Everyone / PEGI 3".
+
+**Target audience:** 18 and over (this avoids the extra rules for apps for children).
+
+**Data safety:**
+- Does your app collect or share any of the required user data types? **No.**
+- Reason: all data stays on the device, and the app has no internet permission. (Data that stays on the device and is not sent off it is not "collected" in Google's definition.)
+
+**Government app:** No. **Financial features:** None. **Health:** No.
+
+**Foreground service permissions:** Declare **Special use**. Text:
+> The app shows a small floating handle on the screen edge that opens a clipboard history panel. When the user does not enable the accessibility service, a foreground service keeps this handle visible. The user can stop it from the notification or the app.
+
+Video: record the handle and panel in use (see the accessibility video below; the same video is fine).
+
+**Accessibility API (important — most review problems are here):** Play Console asks for this when you upload the bundle. Answers:
+- Is the app an accessibility tool? **No.**
+- Description of use:
+> Edge Clipboard uses the AccessibilityService API for its core function. It detects copy actions (a tap on "Copy" or a "Copied" message) so it can save the clipboard text at that moment, and it shows the edge handle and the clipboard panel as an accessibility overlay. The service does not read screen content (canRetrieveWindowContent is false), does not record keystrokes, and sends no data off the device. Before the user is sent to the accessibility settings, the app shows a prominent disclosure and asks for consent.
+- Video (required): record your phone screen for about 30–60 seconds:
+  1. Open the app and select **Turn on** for Copy detection.
+  2. Show the disclosure dialog and select **Agree**.
+  3. Turn on the service in Accessibility settings.
+  4. Copy text in another app, swipe out the panel, and show the new clip.
+  Upload it to YouTube as **Unlisted** and paste the link.
+
+## Step 9. Closed test (required for new personal accounts)
+New personal developer accounts must run a closed test with **at least 12 testers for at least 14 days** before they can publish to production.
+1. Play Console > **Test and release > Testing > Closed testing > Create track**.
+2. Add testers by email list (friends and family with Android phones).
+3. **Create new release**, upload `app-release.aab`, and roll it out.
+4. Send the opt-in link to the testers. They must install and keep the app for 14 days.
+5. After 14 days, select **Apply for production** and answer the questions.
+
+## Step 10. Production
+After Google approves production access: **Production > Create new release**, upload the same or a newer bundle, and roll it out. The first review can take several days.
+
+## Each update
+1. Increase `versionCode` (for example 6 → 7) and `versionName` in `app/build.gradle.kts`.
+2. Build a new bundle (step 3) and upload it to a new release.
+
+## Common rejection reasons — and how this app avoids them
+| Reason | Status |
+|---|---|
+| Trademark in name or icon | Fixed: neutral name "Edge Clipboard" and an original icon. Do not add other brand names to the texts. |
+| Accessibility API without disclosure | The disclosure and consent dialog is built in. Show it in the video. |
+| Missing privacy policy | `docs/privacy.html`, step 5. |
+| Old target SDK | Targets API 36. |
