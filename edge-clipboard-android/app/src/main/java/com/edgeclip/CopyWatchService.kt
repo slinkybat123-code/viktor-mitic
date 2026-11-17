@@ -1,6 +1,9 @@
 package com.edgeclip
 
 import android.accessibilityservice.AccessibilityService
+import android.content.Intent
+import android.content.res.Configuration
+import android.view.WindowManager
 import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
@@ -11,6 +14,49 @@ import android.view.accessibility.AccessibilityEvent
  * asks EdgeService to read the clipboard through a short focus grab. It reads no screen content.
  */
 class CopyWatchService : AccessibilityService() {
+    companion object {
+        /** Set while the service is connected. */
+        var instance: CopyWatchService? = null
+            private set
+    }
+
+    private var controller: EdgeController? = null
+
+    /** Shows the handle as an accessibility overlay: no notification, no "display over apps" needed. */
+    fun showHandle() {
+        if (controller != null) return
+        EdgeService.stop(this) // the fallback host (with notification) is no longer needed
+        controller = EdgeController(this, WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY).also { it.start() }
+    }
+
+    fun hideHandle() {
+        controller?.destroy()
+        controller = null
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        controller?.onConfigChanged()
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        teardown()
+        return super.onUnbind(intent)
+    }
+
+    override fun onDestroy() {
+        teardown()
+        super.onDestroy()
+    }
+
+    /** Copy detection was turned off: move the handle to the fallback host. */
+    private fun teardown() {
+        if (instance !== this) return
+        instance = null
+        val had = controller != null
+        hideHandle()
+        if (had && Prefs.enabled(this)) Autostart.ensureRunning(this)
+    }
     private val ui = Handler(Looper.getMainLooper())
     private var last = 0L
     private val words = listOf("copy", "copied", "clipboard", "kopieren", "kopiert", "copiar", "copier", "copia", "复制")
@@ -31,14 +77,16 @@ class CopyWatchService : AccessibilityService() {
         if (now - last < 500) return
         last = now
         ui.postDelayed({
-            if (Prefs.enabled(this)) EdgeService.start(this, EdgeService.ACTION_GRAB)
+            if (Prefs.enabled(this)) Edge.command(this, Edge.ACTION_GRAB)
         }, 200)
     }
 
     /** The system restarts enabled accessibility services after a reboot: use that to start the handle too. */
     override fun onServiceConnected() {
         super.onServiceConnected()
-        if (Prefs.on(this, K.AUTOSTART)) Autostart.ensureRunning(this)
+        instance = this
+        // Android starts this service after every reboot, so the handle comes back without auto launch.
+        if (Prefs.enabled(this)) showHandle()
     }
 
     override fun onInterrupt() {}

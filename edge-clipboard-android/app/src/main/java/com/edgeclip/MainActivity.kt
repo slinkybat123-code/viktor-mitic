@@ -48,7 +48,7 @@ class MainActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        mainToggle.isChecked = Prefs.enabled(this) && Settings.canDrawOverlays(this)
+        mainToggle.isChecked = Prefs.enabled(this) && canShow()
         Autostart.ensureRunning(this)
         buildPermissions()
         updatePreview()
@@ -68,24 +68,31 @@ class MainActivity : Activity() {
             text = getString(R.string.toggle); textSize = 17f; setTextColor(getColor(R.color.text))
             minHeight = dp(56); setPadding(dp(16), 0, dp(16), 0)
             setOnCheckedChangeListener { _, on ->
-                if (on && !Settings.canDrawOverlays(this@MainActivity)) {
-                    isChecked = false; openOverlaySettings(); return@setOnCheckedChangeListener
+                if (on && !canShow()) {
+                    isChecked = false
+                    AlertDialog.Builder(this@MainActivity)
+                        .setTitle(R.string.need_host_title)
+                        .setMessage(R.string.need_host)
+                        .setPositiveButton(R.string.perm_a11y) { _, _ -> buildPermissions(); permCard.getChildAt(0)?.findViewById<View>(R.id.row_button)?.performClick() }
+                        .setNegativeButton(R.string.perm_overlay) { _, _ -> openOverlaySettings() }
+                        .show()
+                    return@setOnCheckedChangeListener
                 }
                 Prefs.setEnabled(this@MainActivity, on)
                 if (on) {
-                    EdgeService.start(this@MainActivity)
+                    Edge.start(this@MainActivity)
                     if (Prefs.on(this@MainActivity, K.AUTOSTART)) Autostart.scheduleWatchdog(this@MainActivity)
                 } else {
-                    EdgeService.stop(this@MainActivity)
+                    Edge.stop(this@MainActivity)
                     Autostart.cancelWatchdog(this@MainActivity)
                 }
             }
         }
         top.addView(mainToggle)
         top.addView(pillButton(getString(R.string.open_panel)) {
-            if (Settings.canDrawOverlays(this)) {
+            if (canShow()) {
                 Prefs.setEnabled(this, true)
-                EdgeService.start(this, EdgeService.ACTION_OPEN)
+                Edge.start(this, Edge.ACTION_OPEN)
                 moveTaskToBack(true)
             } else openOverlaySettings()
         })
@@ -241,14 +248,13 @@ class MainActivity : Activity() {
     }
 
     private fun handleChanged() {
-        if (EdgeService.running) EdgeService.start(this, EdgeService.ACTION_REFRESH)
+        Edge.active?.command(Edge.ACTION_REFRESH)
     }
 
     // ---------------- Permissions ----------------
 
     private fun buildPermissions() {
         permCard.removeAllViews()
-        perm(R.string.perm_overlay, R.string.perm_overlay_desc, Settings.canDrawOverlays(this)) { openOverlaySettings() }
         perm(R.string.perm_a11y, R.string.perm_a11y_desc, a11yOn()) {
             // Google Play requires a prominent disclosure and consent before this step.
             AlertDialog.Builder(this)
@@ -269,6 +275,7 @@ class MainActivity : Activity() {
             @Suppress("BatteryLife")
             startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:$packageName")))
         }
+        perm(R.string.perm_overlay, R.string.perm_overlay_desc, Settings.canDrawOverlays(this)) { openOverlaySettings() }
     }
 
     private fun perm(title: Int, desc: Int, ok: Boolean, action: () -> Unit) {
@@ -280,6 +287,9 @@ class MainActivity : Activity() {
         else b.setOnClickListener { action() }
         permCard.addView(v)
     }
+
+    /** The handle can show with Copy detection (no notification) or with "Display over other apps". */
+    private fun canShow() = CopyWatchService.instance != null || Settings.canDrawOverlays(this)
 
     private fun a11yOn() = getSystemService(AccessibilityManager::class.java)
         .getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)

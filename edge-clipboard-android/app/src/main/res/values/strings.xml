@@ -24,12 +24,12 @@
     <string name="open_panel">Open clipboard now</string>
     <string name="granted">On</string>
     <string name="grant">Turn on</string>
-    <string name="perm_overlay">Display over other apps</string>
-    <string name="perm_overlay_desc">Required. Shows the handle and the panel.</string>
+    <string name="perm_overlay">Display over other apps (fallback)</string>
+    <string name="perm_overlay_desc">Only needed if Copy detection is off. Then Android shows a permanent notification.</string>
     <string name="perm_a11y">Copy detection</string>
-    <string name="perm_a11y_desc">Recommended. Android blocks clipboard access in the background. This saves clips the moment you copy. Without it, clips save when you open the panel.</string>
+    <string name="perm_a11y_desc">Recommended. Shows the handle with no notification, starts by itself after a phone restart, and saves clips the moment you copy.</string>
     <string name="perm_notif">Notifications</string>
-    <string name="perm_notif_desc">Shows the status notification that keeps the handle running.</string>
+    <string name="perm_notif_desc">Only for the fallback mode. Not needed with Copy detection.</string>
     <string name="perm_battery">Unrestricted battery</string>
     <string name="perm_battery_desc">Stops ColorOS from closing the handle.</string>
     <string name="coloros_title">Oppo / ColorOS</string>
@@ -110,7 +110,9 @@
     <string name="sec_startup">Start-up</string>
     <string name="autostart">Start after phone restart</string>
     <string name="autostart_desc">Shows the handle again after a restart or an app update. Your clips, settings and handle position are always saved.</string>
-    <string name="autolaunch">Auto launch (Oppo / ColorOS)</string>
-    <string name="autolaunch_desc">ColorOS blocks apps from starting after a restart until you allow \"Auto launch\". Turn on One UI Clipboard in that list.</string>
-    <string name="open_autolaunch">Open auto launch settings</string>
+    <string name="autolaunch">Auto launch (only without Copy detection)</string>
+    <string name="autolaunch_desc">With Copy detection on, Android starts the app after a restart by itself. Without it, ColorOS needs Auto launch: open App info, select Battery usage, then turn on \"Allow auto launch\" (on some versions: \"Allow background activity\").</string>
+    <string name="open_autolaunch">Open App info</string>
+    <string name="need_host_title">One more step</string>
+    <string name="need_host">Turn on Copy detection (recommended: no notification, starts by itself after a restart), or allow \"Display over other apps\".</string>
 </resources>

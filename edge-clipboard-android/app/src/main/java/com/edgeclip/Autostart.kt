@@ -16,9 +16,9 @@ object Autostart {
 
     /** Starts the handle if the user turned it on and the overlay permission is granted. */
     fun ensureRunning(c: Context) {
-        if (!Prefs.enabled(c) || !Settings.canDrawOverlays(c) || EdgeService.running) return
+        if (!Prefs.enabled(c) || Edge.running) return
         // Apps with "Display over other apps" may start a foreground service from the background.
-        runCatching { EdgeService.start(c) }
+        runCatching { Edge.start(c) }
     }
 
     /** A persisted job (survives restarts) checks every 15 minutes that the handle still runs. */
@@ -35,21 +35,8 @@ object Autostart {
 
     fun cancelWatchdog(c: Context) = c.getSystemService(JobScheduler::class.java).cancel(JOB_ID)
 
-    /** Opens the ColorOS / OxygenOS auto-launch list, or the app details page as a fallback. */
+    /** Opens the app details page. On ColorOS, Battery usage there has "Allow auto launch". */
     fun openAutoLaunchSettings(c: Context) {
-        val pages = listOf(
-            "com.coloros.safecenter" to "com.coloros.safecenter.startupapp.StartupAppListActivity",
-            "com.coloros.safecenter" to "com.coloros.safecenter.permission.startup.StartupAppListActivity",
-            "com.oplus.safecenter" to "com.oplus.safecenter.startupapp.StartupAppListActivity",
-            "com.oplus.safecenter" to "com.oplus.safecenter.permission.startup.StartupAppListActivity",
-            "com.oppo.safe" to "com.oppo.safe.permission.startup.StartupAppListActivity",
-        )
-        for ((pkg, cls) in pages) {
-            val ok = runCatching {
-                c.startActivity(Intent().setComponent(ComponentName(pkg, cls)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-            }.isSuccess
-            if (ok) return
-        }
         c.startActivity(
             Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${c.packageName}"))
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
