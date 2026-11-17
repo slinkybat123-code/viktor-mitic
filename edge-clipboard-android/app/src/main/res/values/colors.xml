@@ -11,4 +11,5 @@
     <color name="copy_bar">#FFEDEDF2</color>
     <color name="clear_pill">#FFDCDCE6</color>
     <color name="danger">#FFE5484D</color>
+    <color name="chip_bg">#FFE6E6EC</color>
 </resources>

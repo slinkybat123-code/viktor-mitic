@@ -205,9 +205,9 @@ class EdgeService : Service() {
     private fun applyHandleLayout(attach: Boolean = true) {
         val root = handleRoot ?: return
         val right = Prefs.isRight(this)
-        val w = dp(Prefs.widthDp(this).toFloat())
-        val h = dp(Prefs.heightDp(this).toFloat())
-        val gap = dp(Prefs.gapDp(this).toFloat())
+        val w = dp(Prefs.get(this, K.H_WIDTH).toFloat())
+        val h = dp(Prefs.get(this, K.H_HEIGHT).toFloat())
+        val gap = dp(Prefs.get(this, K.H_GAP).toFloat())
         // Touch area is much larger than the visible pill, so the finger is easy to detect.
         hp.width = (max(w + dp(26f), dp(34f)) + gap).toInt()
         hp.height = (h + dp(48f)).toInt()
@@ -218,9 +218,9 @@ class EdgeService : Service() {
         }
         pill.background = GradientDrawable().apply {
             cornerRadius = w / 2f
-            setColor(getColor(R.color.handle))
+            setColor(Style.handleColor(this@EdgeService))
         }
-        pill.alpha = Prefs.alpha(this) / 100f
+        pill.alpha = Prefs.get(this, K.H_ALPHA) / 100f
         val s = screen()
         hp.x = if (right) s.x - hp.width else 0
         val y = Prefs.y(this)
@@ -259,7 +259,7 @@ class EdgeService : Service() {
         SpringAnimation(pill, DynamicAnimation.TRANSLATION_X, 0f).apply {
             spring.stiffness = 700f; spring.dampingRatio = 0.5f; start()
         }
-        pill.animate().scaleX(1f).scaleY(1f).alpha(Prefs.alpha(this) / 100f)
+        pill.animate().scaleX(1f).scaleY(1f).alpha(Prefs.get(this, K.H_ALPHA) / 100f)
             .setInterpolator(DecelerateInterpolator()).setDuration(240).start()
     }
 
@@ -282,7 +282,7 @@ class EdgeService : Service() {
         private val slop = ViewConfiguration.get(this@EdgeService).scaledTouchSlop
         private val longPress = Runnable {
             dragging = true
-            handleRoot?.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+            haptic(HapticFeedbackConstants.LONG_PRESS)
             pill.animate().translationX(0f).scaleX(1.7f).scaleY(1.1f).alpha(1f)
                 .setInterpolator(OvershootInterpolator(2f)).setDuration(220).start()
         }
@@ -293,7 +293,7 @@ class EdgeService : Service() {
             if (opened) return
             opened = true
             ui.removeCallbacks(longPress)
-            handleRoot?.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            haptic(HapticFeedbackConstants.VIRTUAL_KEY)
             openPanel()
         }
 
@@ -307,7 +307,9 @@ class EdgeService : Service() {
                     downX = e.rawX; downY = e.rawY; startX = hp.x; startY = hp.y
                     dragging = false; moved = false; opened = false
                     snapAnim?.cancel()
-                    ui.postDelayed(longPress, 450)
+                    if (!Prefs.on(this@EdgeService, K.LOCK_POS)) {
+                        ui.postDelayed(longPress, Prefs.get(this@EdgeService, K.HOLD_MS).toLong())
+                    }
                     pill.animate().scaleX(1.25f).alpha(1f).setDuration(100).start()
                 }
                 MotionEvent.ACTION_MOVE -> {
@@ -326,7 +328,8 @@ class EdgeService : Service() {
                         // Rubber-band: pill follows the finger, with resistance.
                         val dir = if (Prefs.isRight(this@EdgeService)) -1f else 1f
                         pill.translationX = dir * dp(14f) * (1f - 1f / (1f + inw / dp(40f)))
-                        if (!opened && inw > dp(56f) && inw > abs(dy)) open()
+                        val full = dp(Prefs.get(this@EdgeService, K.SWIPE_DIST) + 36f)
+                        if (!opened && inw > full && inw > abs(dy)) open()
                     }
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -342,8 +345,12 @@ class EdgeService : Service() {
                     } else {
                         val inw = inward(dx)
                         val horizontal = abs(dx) > abs(dy) * 0.8f
-                        if (!opened && horizontal && (inw > dp(20f) || (inw > dp(6f) && vel > dp(450f)))) open()
-                        else if (!moved && e.actionMasked == MotionEvent.ACTION_UP) { v.performClick(); nudge(); return true }
+                        val dist = dp(Prefs.get(this@EdgeService, K.SWIPE_DIST).toFloat())
+                        if (!opened && horizontal && (inw > dist || (inw > dp(6f) && vel > dp(450f)))) open()
+                        else if (!moved && e.actionMasked == MotionEvent.ACTION_UP) {
+                            v.performClick()
+                            if (Prefs.on(this@EdgeService, K.TAP_OPEN)) open() else { nudge(); return true }
+                        }
                         springPillBack()
                     }
                 }
@@ -359,11 +366,32 @@ class EdgeService : Service() {
     // ---------- Clipboard panel ----------
 
     private var detailOpen = false
+    private var animSpeed = 1f
+
+    private fun haptic(type: Int) {
+        if (Prefs.on(this, K.HAPTICS)) (panel ?: handleRoot)?.performHapticFeedback(type)
+    }
+
+    /** Animates the background blur behind the panel (Android 12+). */
+    private fun animateBlur(root: View, p: WindowManager.LayoutParams, from: Int, to: Int, ms: Long) {
+        if (Build.VERSION.SDK_INT < 31) return
+        android.animation.ValueAnimator.ofInt(from, to).apply {
+            duration = ms
+            addUpdateListener {
+                p.blurBehindRadius = it.animatedValue as Int
+                if (root.isAttachedToWindow) runCatching { wm.updateViewLayout(root, p) }
+            }
+            start()
+        }
+    }
 
     private fun openPanel() {
         if (panel != null || handleRoot == null) return
-        val ctx = ContextThemeWrapper(this, R.style.Theme_EdgeClip)
+        ClipStore.prune()
+        val ctx = Style.themed(this)
         val root = LayoutInflater.from(ctx).inflate(R.layout.panel, null) as FrameLayout
+        val speed = Prefs.get(this, K.ANIM).coerceIn(25, 300) / 100f
+        animSpeed = speed
         val scrim = root.findViewById<View>(R.id.scrim)
         val card = root.findViewById<View>(R.id.card)
         val listPage = root.findViewById<View>(R.id.list_page)
@@ -373,12 +401,18 @@ class EdgeService : Service() {
         val right = Prefs.isRight(this)
         detailOpen = false
 
-        (card.layoutParams as FrameLayout.LayoutParams).gravity = if (right) Gravity.END else Gravity.START
-        card.setBackgroundResource(if (right) R.drawable.bg_panel_right else R.drawable.bg_panel_left)
+        (card.layoutParams as FrameLayout.LayoutParams).apply {
+            gravity = if (right) Gravity.END else Gravity.START
+            width = dp(Prefs.get(this@EdgeService, K.P_WIDTH).toFloat()).toInt()
+        }
+        card.background = Style.panelBackground(ctx, right)
+        card.setPadding(0, dp(Prefs.get(this, K.P_TOP).toFloat()).toInt(), 0, dp(16f).toInt())
+        scrim.setBackgroundColor(Style.alpha(0xFF000000.toInt(), Prefs.get(this, K.DIM)))
 
         val adapter = ClipAdapter(
+            Look.from(this),
             onOpen = { showDetail(root, it) },
-            onCopy = { copyClip(it); closePanel() },
+            onCopy = { copyClip(it); if (Prefs.on(this, K.CLOSE_AFTER_COPY)) closePanel() },
             onPin = { ClipStore.togglePin(it) },
             onDelete = { ClipStore.delete(it) },
         )
@@ -415,20 +449,24 @@ class EdgeService : Service() {
         if (Build.VERSION.SDK_INT >= 28) {
             p.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
         }
+        val blur = dp(Prefs.get(this, K.BLUR).toFloat()).toInt()
+        val canBlur = Build.VERSION.SDK_INT >= 31 && blur > 0 && wm.isCrossWindowBlurEnabled
+        if (canBlur) p.flags = p.flags or WindowManager.LayoutParams.FLAG_BLUR_BEHIND
         wm.addView(root, p)
+        if (canBlur) animateBlur(root, p, 0, blur, (260 / speed).toLong())
         panel = root
         root.requestFocus()
 
         listPage.visibility = View.VISIBLE
         detailPage.visibility = View.GONE
         scrim.alpha = 0f
-        scrim.animate().alpha(1f).setDuration(240).start()
+        scrim.animate().alpha(1f).setDuration((240 / speed).toLong()).start()
         card.alpha = 0f
         card.post {
             card.translationX = (card.width + dp(32f)) * if (right) 1f else -1f
             card.alpha = 1f
             SpringAnimation(card, DynamicAnimation.TRANSLATION_X, 0f).apply {
-                spring.stiffness = 520f
+                spring.stiffness = 520f * speed * speed
                 spring.dampingRatio = 0.78f
                 start()
             }
@@ -461,7 +499,10 @@ class EdgeService : Service() {
             text.text = ClipAdapter.styled(c, Int.MAX_VALUE)
             info.text = getString(R.string.chars, t.length)
         }
-        root.findViewById<View>(R.id.detail_copy).setOnClickListener { copyClip(c); closePanel() }
+        root.findViewById<View>(R.id.detail_copy).setOnClickListener {
+            copyClip(c)
+            if (Prefs.on(this, K.CLOSE_AFTER_COPY)) closePanel()
+        }
         detailOpen = true
         val w = root.findViewById<View>(R.id.card).width.toFloat()
         page.visibility = View.VISIBLE
@@ -493,11 +534,16 @@ class EdgeService : Service() {
         if (!animate) { remove(); return }
         val card = root.findViewById<View>(R.id.card)
         val right = Prefs.isRight(this)
-        root.findViewById<View>(R.id.scrim).animate().alpha(0f).setDuration(200).start()
+        val d = (200 / animSpeed).toLong()
+        val lp = root.layoutParams as? WindowManager.LayoutParams
+        if (lp != null && lp.flags and WindowManager.LayoutParams.FLAG_BLUR_BEHIND != 0 && Build.VERSION.SDK_INT >= 31) {
+            animateBlur(root, lp, lp.blurBehindRadius, 0, d)
+        }
+        root.findViewById<View>(R.id.scrim).animate().alpha(0f).setDuration(d).start()
         card.animate()
             .translationX((card.width + dp(32f)) * if (right) 1f else -1f)
             .setInterpolator(AccelerateInterpolator(1.5f))
-            .setDuration(200)
+            .setDuration(d)
             .withEndAction { remove() }
             .start()
     }
@@ -521,6 +567,7 @@ class EdgeService : Service() {
                 else -> ClipData.newPlainText("EdgeClip", c.text)
             }
             cm.setPrimaryClip(data)
+            haptic(HapticFeedbackConstants.CONFIRM)
             if (Build.VERSION.SDK_INT < 33) Toast.makeText(this, R.string.copied, Toast.LENGTH_SHORT).show()
         }.onFailure { Toast.makeText(this, R.string.copy_failed, Toast.LENGTH_SHORT).show() }
     }
@@ -538,6 +585,7 @@ class EdgeService : Service() {
             if (uri != null) {
                 val mime = runCatching { contentResolver.getType(uri) }.getOrNull() ?: desc.getMimeType(0)
                 if (mime?.startsWith("image/") == true || desc.hasMimeType("image/*")) {
+                    if (!Prefs.on(this, K.SAVE_IMAGES)) return
                     val ext = when {
                         mime?.contains("png") == true -> "png"
                         mime?.contains("gif") == true -> "gif"

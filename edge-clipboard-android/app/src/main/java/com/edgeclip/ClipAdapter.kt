@@ -22,6 +22,7 @@ import java.io.File
  * Tap the preview = open full clip. Touch and hold = show Pin / Delete.
  */
 class ClipAdapter(
+    private val look: Look,
     private val onOpen: (Clip) -> Unit,
     private val onCopy: (Clip) -> Unit,
     private val onPin: (Clip) -> Unit,
@@ -41,8 +42,11 @@ class ClipAdapter(
         val copy: View = v.findViewById(R.id.clip_copy)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        VH(LayoutInflater.from(parent.context).inflate(R.layout.item_clip, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_clip, parent, false)
+        Style.applyItem(v, look)
+        return VH(v)
+    }
 
     override fun onBindViewHolder(h: VH, position: Int) {
         val c = getItem(position)
@@ -57,7 +61,7 @@ class ClipAdapter(
         } else {
             h.image.visibility = View.GONE
             h.text.visibility = View.VISIBLE
-            h.text.text = styled(c, 400) // preview only; full text opens on tap
+            h.text.text = styled(c, 400, look.sourceColors) // preview only; full text opens on tap
             h.body.contentDescription = null
         }
         h.pinBadge.visibility = if (c.pinned) View.VISIBLE else View.GONE
@@ -85,10 +89,10 @@ class ClipAdapter(
         }
 
         /** Text with the source app's colours when available. */
-        fun styled(c: Clip, maxChars: Int): CharSequence {
+        fun styled(c: Clip, maxChars: Int, colors: Boolean = true): CharSequence {
             val t = c.text ?: return ""
             val html = c.html
-            if (html != null && html.length < 60_000) {
+            if (colors && html != null && html.length < 60_000) {
                 runCatching {
                     val sp = Html.fromHtml(html, Html.FROM_HTML_MODE_COMPACT)
                     var end = sp.length

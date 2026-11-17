@@ -13,7 +13,7 @@
         android:id="@+id/card"
         android:layout_width="184dp"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_panel_right"
+        android:background="@null"
         android:clickable="true"
         android:elevation="16dp"
         android:paddingTop="36dp"

@@ -23,11 +23,12 @@ data class Clip(
 }
 
 /**
- * Clipboard history saved to app storage. Max [MAX] clips; the oldest unpinned clip is
- * deleted first. Text length has no limit. Use from the main thread only.
+ * Clipboard history saved to app storage (and optionally a copy in a chosen folder).
+ * The max number of clips and auto-delete age come from Prefs; the oldest unpinned clip
+ * is deleted first. Text length has no limit. Use from the main thread only.
  */
 object ClipStore {
-    const val MAX = 30
+    private lateinit var app: Context
 
     private val clips = mutableListOf<Clip>()
     private val listeners = mutableSetOf<() -> Unit>()
@@ -39,7 +40,8 @@ object ClipStore {
 
     fun init(ctx: Context) {
         if (file != null) return
-        val dir = ctx.applicationContext.filesDir
+        app = ctx.applicationContext
+        val dir = app.filesDir
         imageDir = File(dir, "images").apply { mkdirs() }
         val f = File(dir, "clips.json")
         file = f
@@ -112,12 +114,44 @@ object ClipStore {
         val old = clips.firstOrNull { it.key == c.key }
         clips.removeAll { it.key == c.key }
         clips.add(0, c.copy(pinned = old?.pinned ?: false, image = old?.image ?: c.image))
-        while (clips.size > MAX) {
+        val max = Prefs.maxClips(app)
+        while (max > 0 && clips.size > max) {
             val oldest = clips.filter { !it.pinned }.minByOrNull { it.time } ?: clips.minBy { it.time }
             clips.remove(oldest)
             removeFiles(oldest)
         }
         commit()
+    }
+
+    /** Deletes unpinned clips older than the auto-delete age, and trims to the max count. */
+    fun prune() {
+        val age = Prefs.autoDeleteMs(app)
+        var changed = false
+        if (age > 0) {
+            val limit = System.currentTimeMillis() - age
+            clips.filter { !it.pinned && it.time < limit }.forEach { removeFiles(it); clips.remove(it); changed = true }
+        }
+        val max = Prefs.maxClips(app)
+        while (max > 0 && clips.size > max) {
+            val oldest = clips.filter { !it.pinned }.minByOrNull { it.time } ?: break
+            clips.remove(oldest); removeFiles(oldest); changed = true
+        }
+        if (changed) commit()
+    }
+
+    fun clearAll() {
+        clips.forEach { removeFiles(it) }
+        clips.clear()
+        commit()
+    }
+
+    fun count() = clips.size
+
+    /** Writes everything to the chosen folder now. */
+    fun syncFolder() {
+        val json = toJson()
+        val imgs = clips.mapNotNull { it.image }.toSet()
+        io.execute { FolderMirror.sync(app, json, imageDir, imgs) }
     }
 
     private fun removeFiles(c: Clip) {
@@ -128,6 +162,17 @@ object ClipStore {
     private fun newId(): Long { lastId = maxOf(lastId + 1, System.currentTimeMillis()); return lastId }
 
     private fun commit() {
+        val json = toJson()
+        val imgs = clips.mapNotNull { it.image }.toSet()
+        val f = file
+        io.execute {
+            runCatching { f?.writeText(json) }
+            FolderMirror.sync(app, json, imageDir, imgs)
+        }
+        listeners.toList().forEach { it() }
+    }
+
+    private fun toJson(): String {
         val arr = JSONArray()
         clips.forEach {
             val o = JSONObject().put("id", it.id).put("k", it.key).put("at", it.time).put("p", it.pinned)
@@ -136,10 +181,7 @@ object ClipStore {
             if (it.image != null) o.put("img", it.image)
             arr.put(o)
         }
-        val json = arr.toString()
-        val f = file
-        io.execute { runCatching { f?.writeText(json) } }
-        listeners.toList().forEach { it() }
+        return arr.toString()
     }
 
     fun sha1(b: ByteArray): String =

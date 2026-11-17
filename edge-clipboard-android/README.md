@@ -1,4 +1,4 @@
-# Edge Clipboard (Android)
+# One UI Clipboard (Android)
 
 A floating edge handle that opens a clipboard history panel, in the style of the One UI Edge Panel clipboard.
 
@@ -18,9 +18,17 @@ A floating edge handle that opens a clipboard history panel, in the style of the
 - Clips are saved in app storage (`files/clips.json`). Maximum 30 clips. When a new clip arrives, the oldest clip that is not pinned is deleted.
 - Clips marked as sensitive (for example passwords) are not saved.
 
+## Settings (all adjustable in the app, with a live preview)
+- **Handle:** screen side, colour, width, height, opacity, distance from edge, swipe distance, hold time, tap to open, lock position, vibration.
+- **Panel:** theme (system, light, dark), width, opacity, background blur (Android 12+), background dim, corner radius, space at top, animation speed.
+- **Clips:** text size, preview lines, clip opacity, corner radius, space between clips, padding, Copy bar on or off, Copy bar height and text size, keep original colours, close after copy.
+- **Storage:** maximum clips (5–500) or no limit, auto-delete after 1 hour / 1 day / 7 days / 30 days, save images, storage location (app storage, plus an optional copy in a folder you choose), delete all clips, reset all settings.
+
+See `PUBLISHING.md` to publish on Google Play and `PRIVACY.md` for the privacy policy.
+
 ## Install the APK
 1. Copy `release/EdgeClip-debug.apk` to the phone and open it. Allow "Install unknown apps" if asked.
-2. Open Edge Clipboard and turn on each permission row.
+2. Open One UI Clipboard and turn on each permission row.
 3. Turn on "Show edge handle".
 
 ## Build from source
@@ -30,14 +38,14 @@ A floating edge handle that opens a clipboard history panel, in the style of the
    Command line: `gradlew assembleDebug` → `app/build/outputs/apk/debug/app-debug.apk`.
 
 ## How clipboard capture works
-Android 10 and later block background apps from reading the clipboard. Edge Clipboard uses two methods:
+Android 10 and later block background apps from reading the clipboard. One UI Clipboard uses two methods:
 1. **Copy detection (accessibility service, recommended):** When you tap "Copy", or a "Copied" message shows, the app adds a 1 × 1 px focusable window for less than one second, reads the clipboard, and removes the window. The service does not read screen content.
 2. **Panel open:** Each time the panel opens, it reads the current clipboard.
 
 Without copy detection, only the last item you copied before you opened the panel is saved.
 
 ## Oppo / ColorOS checks
-- Settings > Apps > Edge Clipboard > Battery usage: allow background activity and auto launch.
+- Settings > Apps > One UI Clipboard > Battery usage: allow background activity and auto launch.
 - Lock the app in Recent apps.
 - ColorOS can turn off accessibility services after an update. Turn on Copy detection again if clips stop saving.
 
