@@ -38,7 +38,7 @@ Output: `app/build/outputs/bundle/release/app-release.aab`. Install the release 
    - **Accessibility API:** declare the use. Say it detects copy actions to save clipboard history, it is not an accessibility tool, and the app shows a disclosure and asks for consent first (already built in). Upload a short video of the disclosure and the feature.
    - **Foreground service (special use):** say it keeps the floating edge handle visible so the user can open clipboard history at any time.
    - **Display over other apps:** no form, but say it in the description.
-6. **Store listing:** short description, full description, icon 512 × 512, feature graphic 1024 × 500, at least 2 phone screenshots.
+6. **Store listing:** short description, full description, icon 512 × 512 (`store/icon-512.png`), feature graphic 1024 × 500, at least 2 phone screenshots.
 7. **Testing:** new personal developer accounts must run a closed test with at least 12 testers for 14 days before production.
 8. Upload the `.aab` to the testing track, then to production.
 
