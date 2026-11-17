@@ -127,6 +127,8 @@ class MainActivity : Activity() {
         slider(c, R.string.width, K.H_WIDTH, 2, 20, "dp") { handleChanged() }
         slider(c, R.string.height, K.H_HEIGHT, 30, 200, "dp") { handleChanged() }
         slider(c, R.string.opacity, K.H_ALPHA, 10, 100, "%") { handleChanged() }
+        toggle(c, R.string.avoid_back, R.string.avoid_back_desc, K.AVOID_BACK) { handleChanged() }
+        slider(c, R.string.back_zone, K.BACK_ZONE, 0, 48, "dp", desc = R.string.back_zone_desc) { handleChanged() }
         slider(c, R.string.gap, K.H_GAP, 0, 32, "dp") { handleChanged() }
         slider(c, R.string.swipe_dist, K.SWIPE_DIST, 8, 80, "dp")
         slider(c, R.string.hold_time, K.HOLD_MS, 200, 1500, "ms", step = 50)

@@ -33,13 +33,13 @@
     <string name="perm_battery">Unrestricted battery</string>
     <string name="perm_battery_desc">Stops ColorOS from closing the handle.</string>
     <string name="coloros_title">Oppo / ColorOS</string>
-    <string name="coloros_tips">1. Settings &gt; Apps &gt; Edge Clipboard &gt; Battery usage: allow background activity and auto launch.\n2. In Recent apps, lock Edge Clipboard (pull the card down).\n3. If the back gesture still takes your swipe, increase \"Distance from edge\".\n4. If Copy detection turns off after a restart, turn it on again in Accessibility.</string>
+    <string name="coloros_tips">1. Settings &gt; Apps &gt; Edge Clipboard &gt; Battery usage: allow background activity and auto launch.\n2. In Recent apps, lock Edge Clipboard (pull the card down).\n3. If a swipe on the handle still goes back, increase \"Back gesture strip width\".\n4. If Copy detection turns off after a restart, turn it on again in Accessibility.</string>
     <string name="copy">Copy</string>
     <string name="back">Back</string>
     <string name="image_clip">Image</string>
     <string name="chars">%1$d characters</string>
     <string name="copy_failed">Could not copy this clip</string>
-    <string name="gap">Distance from edge</string>
+    <string name="gap">Extra distance from edge</string>
     <string name="sec_preview">Live preview</string>
     <string name="sec_handle">Handle</string>
     <string name="sec_panel">Panel</string>
@@ -120,4 +120,8 @@
     <string name="panel_vpos_desc">0% = top, 50% = centre, 100% = bottom.</string>
     <string name="panel_follow">Follow handle position</string>
     <string name="panel_follow_desc">The panel opens centred on the handle. Panel position is not used.</string>
+    <string name="avoid_back">Keep back gesture free</string>
+    <string name="avoid_back_desc">The handle does not cover the edge strip that the phone uses for its back gesture. Swipes on the edge always go back.</string>
+    <string name="back_zone">Back gesture strip width</string>
+    <string name="back_zone_desc">Make it wider if a swipe on the handle still goes back. Make it smaller to move the handle closer to the edge.</string>
 </resources>

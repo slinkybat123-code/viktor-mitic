@@ -151,8 +151,10 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
         val w = dp(Prefs.get(this, K.H_WIDTH).toFloat())
         val h = dp(Prefs.get(this, K.H_HEIGHT).toFloat())
         val gap = dp(Prefs.get(this, K.H_GAP).toFloat())
-        // Touch area is much larger than the visible pill, so the finger is easy to detect.
+        // Touch area is larger than the visible pill, so the finger is easy to detect.
         hp.width = (max(w + dp(26f), dp(34f)) + gap).toInt()
+        // The window does not cover the system back-gesture strip, so the two never overlap.
+        val zone = backZone()
         hp.height = (h + dp(48f)).toInt()
         pill.layoutParams = FrameLayout.LayoutParams(w.toInt(), h.toInt()).apply {
             gravity = Gravity.CENTER_VERTICAL or if (right) Gravity.END else Gravity.START
@@ -165,37 +167,33 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
         }
         pill.alpha = Prefs.get(this, K.H_ALPHA) / 100f
         val s = screen()
-        hp.x = if (right) s.x - hp.width else 0
+        hp.x = if (right) s.x - hp.width - zone else zone
         val y = Prefs.y(this)
         hp.y = (if (y < 0) (s.y * 0.3f).toInt() else y).coerceIn(0, max(0, s.y - hp.height))
         if (attach && root.isAttachedToWindow) wm.updateViewLayout(root, hp)
     }
 
-    /** Asks the system not to use touches on the handle for the back gesture (Android 10+). */
+    /** Width in px of the edge strip kept free for the system back gesture (0 = not kept free). */
+    private fun backZone() =
+        if (Prefs.on(this, K.AVOID_BACK)) dp(Prefs.get(this, K.BACK_ZONE).toFloat()).toInt() else 0
+
+    /**
+     * Only when the back-gesture strip is not kept free: asks the system not to use touches on
+     * the handle for the back gesture (Android 10+).
+     */
     private fun excludeSystemGesture(v: View) {
-        if (Build.VERSION.SDK_INT >= 29) v.systemGestureExclusionRects = listOf(Rect(0, 0, v.width, v.height))
+        if (Build.VERSION.SDK_INT < 29) return
+        v.systemGestureExclusionRects =
+            if (Prefs.on(this, K.AVOID_BACK)) emptyList() else listOf(Rect(0, 0, v.width, v.height))
     }
 
+    /** Ends a handle move: the handle stays on its side; only the height is saved. */
     private fun snapToEdge() {
         val root = handleRoot ?: return
         val s = screen()
-        val right = hp.x + hp.width / 2 > s.x / 2
-        Prefs.setRight(this, right)
         hp.y = hp.y.coerceIn(0, max(0, s.y - hp.height))
         Prefs.setY(this, hp.y)
-        (pill.layoutParams as FrameLayout.LayoutParams).gravity =
-            Gravity.CENTER_VERTICAL or if (right) Gravity.END else Gravity.START
-        pill.requestLayout()
-        val target = (if (right) s.x - hp.width else 0).toFloat()
-        snapAnim?.cancel()
-        snapAnim = SpringAnimation(FloatValueHolder(hp.x.toFloat())).apply {
-            spring = SpringForce(target).setStiffness(SpringForce.STIFFNESS_MEDIUM).setDampingRatio(0.62f)
-            addUpdateListener { _, v, _ ->
-                hp.x = v.toInt()
-                if (root.isAttachedToWindow) wm.updateViewLayout(root, hp)
-            }
-            start()
-        }
+        if (root.isAttachedToWindow) wm.updateViewLayout(root, hp)
     }
 
     private fun springPillBack() {
@@ -224,11 +222,15 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
         private var pulling = false; private var pullBase = 0f; private var pullX = 0f; private var ticked = false
         private var vt: VelocityTracker? = null
         private val slop = ViewConfiguration.get(this@EdgeController).scaledTouchSlop
+        private var lastY = 0f
         private val longPress = Runnable {
             dragging = true
+            // Start the move from where the finger is now, so the handle does not jump.
+            startY = hp.y
+            downY = lastY
             haptic(HapticFeedbackConstants.LONG_PRESS)
-            pill.animate().translationX(0f).scaleX(1.7f).scaleY(1.1f).alpha(1f)
-                .setInterpolator(OvershootInterpolator(2f)).setDuration(220).start()
+            pill.animate().translationX(0f).scaleX(1.5f).alpha(1f)
+                .setInterpolator(DecelerateInterpolator()).setDuration(160).start()
         }
 
         private fun inward(dx: Float) = if (Prefs.isRight(this@EdgeController)) -dx else dx
@@ -240,7 +242,7 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
                 MotionEvent.ACTION_DOWN -> {
                     excludeSystemGesture(v)
                     vt?.recycle(); vt = VelocityTracker.obtain().also { it.addMovement(e.withRaw()) }
-                    downX = e.rawX; downY = e.rawY; startX = hp.x; startY = hp.y
+                    downX = e.rawX; downY = e.rawY; lastY = e.rawY; startX = hp.x; startY = hp.y
                     dragging = false; moved = false; pulling = false; ticked = false
                     snapAnim?.cancel()
                     if (!Prefs.on(this@EdgeController, K.LOCK_POS)) {
@@ -249,11 +251,12 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
                     pill.animate().scaleX(1.25f).alpha(1f).setDuration(100).start()
                 }
                 MotionEvent.ACTION_MOVE -> {
+                    lastY = e.rawY
                     val dx = e.rawX - downX
                     val dy = e.rawY - downY
                     if (dragging) {
-                        hp.x = (startX + dx).toInt()
-                        hp.y = (startY + dy).toInt()
+                        // Up and down only: the handle stays on its side.
+                        hp.y = (startY + dy).toInt().coerceIn(0, max(0, screen().y - hp.height))
                         wm.updateViewLayout(v, hp)
                         return true
                     }
