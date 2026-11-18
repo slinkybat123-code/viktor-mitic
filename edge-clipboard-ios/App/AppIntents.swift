@@ -19,7 +19,10 @@ struct SaveClipboardIntent: AppIntent {
             saved = ClipStore.shared.addText(u.absoluteString)
         }
         AppGroup.defaults.set(pb.changeCount, forKey: Settings.lastChangeKey)
-        return .result(dialog: saved ? "Saved to Edge Clipboard" : "Nothing new to save")
+        if saved {
+            return .result(dialog: "Saved to Edge Clipboard")
+        }
+        return .result(dialog: "Nothing new to save")
     }
 }
 

@@ -22,5 +22,6 @@ jobs:
         run: |
           xcodebuild -project EdgeClipboard.xcodeproj -target EdgeClipboard \
             -sdk iphonesimulator -configuration Debug \
-            CODE_SIGNING_ALLOWED=NO build | tail -n 80
-          exit ${PIPESTATUS[0]}
+            CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=NO ARCHS=arm64 build > build.log 2>&1 || status=$?
+          grep -E "error:|\*\* BUILD" build.log | sort -u || true
+          exit ${status:-0}
