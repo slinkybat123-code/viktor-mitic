@@ -11,6 +11,7 @@ Claude prepared the app, the store texts, the graphics, the privacy policy and a
 | Icon 512 × 512 | `store/icon-512.png` |
 | Feature graphic 1024 × 500 | `store/feature-graphic.png` |
 | Privacy policy | `docs/privacy.html` (repository root) |
+| Build and upload workflow | `.github/workflows/edge-clipboard-release.yml` |
 
 ---
 
@@ -139,6 +140,14 @@ New personal developer accounts must run a closed test with **at least 12 tester
 
 ## Step 10. Production
 After Google approves production access: **Production > Create new release**, upload the same or a newer bundle, and roll it out. The first review can take several days.
+
+## Step 11 (optional). Upload from GitHub with one click
+After the first release exists in Play Console (the first bundle must be uploaded by hand, step 9), GitHub can upload new versions for you.
+1. Play Console > **Setup > API access**. Link a Google Cloud project (create one if asked).
+2. Select **Create new service account** and follow the link to Google Cloud. Create the account, then **Keys > Add key > JSON**. A `.json` file downloads. Store it in `E:\CLAUDE\keys` and never put it in the repository.
+3. Back in Play Console: **Users and permissions > Invite new users**. Paste the service account email. Under **App permissions**, add Edge Clipboard with **Release apps to testing tracks** (and **Release to production** if you want).
+4. GitHub > **Settings > Secrets and variables > Actions > New repository secret**: name `PLAY_SERVICE_ACCOUNT_JSON`, value = the full text of the `.json` file.
+5. To release: increase `versionCode`, push to `main`, then **Actions > Edge Clipboard release bundle > Run workflow**. Select the track (`internal`, `alpha` = closed test, `beta`, `production`) and the status (`draft` lets you check it in Play Console first; `completed` rolls it out at once).
 
 ## Each update
 1. Increase `versionCode` (for example 6 → 7) and `versionName` in `app/build.gradle.kts`.
