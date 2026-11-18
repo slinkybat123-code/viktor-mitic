@@ -1,10 +1,12 @@
-# Privacy policy — Edge Clipboard
+# Privacy policy — Edge Clipboard (Android and iPhone)
 
 Last update: 17 November 2026
 
 ## Data the app uses
 - **Clipboard content (text and images).** The app saves items you copy so you can paste them again.
 - **Copy events.** If you turn on Copy detection, the app uses the Android Accessibility Service API only to detect a tap on "Copy" or a "Copied" message. It does not read screen content and does not record what you type.
+
+- **iPhone keyboard.** The Edge Clipboard keyboard asks for "Full Access" only to read the clips you saved. It does not record what you type and has no network access.
 
 ## Where the data stays
 - All clips stay on your device, in private app storage.

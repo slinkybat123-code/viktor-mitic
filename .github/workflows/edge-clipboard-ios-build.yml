@@ -1,0 +1,26 @@
+# Compiles the iOS app and its extensions for the Simulator (no signing needed).
+name: Edge Clipboard iOS build check
+
+on:
+  workflow_dispatch:
+  push:
+    paths: ["edge-clipboard-ios/**", ".github/workflows/edge-clipboard-ios-build.yml"]
+
+jobs:
+  build:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: edge-clipboard-ios
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate project
+        run: xcodegen generate
+      - name: Build (Simulator)
+        run: |
+          xcodebuild -project EdgeClipboard.xcodeproj -target EdgeClipboard \
+            -sdk iphonesimulator -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO build | tail -n 80
+          exit ${PIPESTATUS[0]}
