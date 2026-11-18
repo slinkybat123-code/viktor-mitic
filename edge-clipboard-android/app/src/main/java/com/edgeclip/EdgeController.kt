@@ -396,18 +396,38 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
 
     /** Springs to open (true) or closed (false). [velocity] is in open-state units per second. */
     private fun settle(open: Boolean, velocity: Float = 0f) {
-        if (panel == null) return
+        val root = panel ?: return
         progressAnim?.cancel()
+        // A closing panel must not catch touches: they pass through to the handle and other apps at once.
+        setPanelTouchable(open)
         progressAnim = SpringAnimation(FloatValueHolder(progress)).apply {
             spring = SpringForce(if (open) 1f else 0f)
                 .setStiffness(380f * animSpeed * animSpeed)
                 .setDampingRatio(if (open) 0.85f else 1f)
             setMinimumVisibleChange(DynamicAnimation.MIN_VISIBLE_CHANGE_SCALE)
             setStartVelocity(velocity)
-            addUpdateListener { _, v, _ -> setProgress(v) }
-            addEndListener { _, canceled, _, _ -> if (!canceled && !open) removePanel() }
+            addUpdateListener { anim, v, _ ->
+                setProgress(v)
+                // Remove the window when it is out of sight; do not wait for the spring's slow tail.
+                if (!open && v <= 0.01f) {
+                    ui.post { if (panel === root && progressAnim === anim) removePanel() }
+                }
+            }
+            addEndListener { anim, canceled, _, _ ->
+                if (!canceled && !open && panel === root && progressAnim === anim) removePanel()
+            }
             start()
         }
+    }
+
+    private fun setPanelTouchable(touchable: Boolean) {
+        val root = panel ?: return
+        val lp = panelParams ?: return
+        val off = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+        val flags = if (touchable) lp.flags and off.inv() else lp.flags or off
+        if (flags == lp.flags) return
+        lp.flags = flags
+        if (root.isAttachedToWindow) runCatching { wm.updateViewLayout(root, lp) }
     }
 
     private fun openPanel() {
