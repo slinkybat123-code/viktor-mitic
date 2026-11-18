@@ -7,14 +7,14 @@ A floating edge handle that opens a clipboard history panel, in the style of the
 - The panel follows your finger. Swipe out slowly and it opens as far as you pull. Swipe back and it goes back. Release past the halfway point (or the set swipe distance) and it springs open. A quick flick opens or closes it at once, with the speed of your flick.
 - When the panel is open, push it toward the edge with your finger to close it. Vertical scrolling in the list still works.
 - A tap on the handle only makes it bounce (unless "Tap to open" is on).
-- "Keep back gesture free" (on by default): the handle does not cover the edge strip that the phone uses for its back gesture, so a swipe on the edge always goes back and a swipe on the handle always opens the panel. Adjust "Back gesture strip width" (default 16 dp) to match your phone.
-- Touch and hold the handle to move it up or down. It stays on its side; change the side in Settings.
+- The handle asks Android to exclude its area from the system back gesture (Android 10+). If ColorOS still takes the swipe, increase "Distance from edge".
 - One UI style panel: a full-height column on the edge, large previews, a full-width **Copy** bar under each preview, and a **Clear** pill at the bottom.
 - Tap a preview to see the full clip (scrollable, selectable text, or the full image), with a Copy bar.
 - Touch and hold a preview to show Pin and Delete.
 - Text keeps the colours and formatting of the source app when the app gives them.
 - Images are saved too (a copy goes to `files/images`). Copy puts the image back on the clipboard.
 - No size limit on one clip. Android limits one clipboard transfer to about 1 MB, so text longer than 250,000 characters is copied back as a text file.
+- Touch and hold the handle (0.4 s, with vibration) to drag it. On release it springs to the nearest left or right edge. The position is saved.
 - Panel with rounded corners, spring slide-in, fade scrim and staggered list animation. Dark mode follows the system.
 - "Clear" deletes all clips that are not pinned.
 - Clips are saved in app storage (`files/clips.json`). Maximum 30 clips. When a new clip arrives, the oldest clip that is not pinned is deleted.
