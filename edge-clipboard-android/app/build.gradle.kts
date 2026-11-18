@@ -19,8 +19,8 @@ android {
         applicationId = "io.github.slinkybat123.edgeclip"
         minSdk = 26
         targetSdk = 36
-        versionCode = 9
-        versionName = "1.5.1"
+        versionCode = 10
+        versionName = "1.6.0"
     }
 
     signingConfigs {

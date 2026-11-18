@@ -85,17 +85,19 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
         cm.removePrimaryClipChangedListener(clipListener)
         snapAnim?.cancel()
         closePanel(animate = false)
-        listOfNotNull(handleRoot, grabView).forEach { runCatching { wm.removeView(it) } }
-        handleRoot = null; grabView = null
+        listOfNotNull(pillRoot, handleRoot, grabView).forEach { runCatching { wm.removeView(it) } }
+        pillRoot = null; handleRoot = null; grabView = null
     }
 
     private lateinit var wm: WindowManager
     private lateinit var cm: ClipboardManager
     private val ui = Handler(Looper.getMainLooper())
 
-    private var handleRoot: FrameLayout? = null
+    private var handleRoot: FrameLayout? = null   // touch box window
+    private var pillRoot: FrameLayout? = null     // visible pill window
     private lateinit var pill: View
     private lateinit var hp: WindowManager.LayoutParams
+    private lateinit var vp: WindowManager.LayoutParams
     private var snapAnim: SpringAnimation? = null
 
     private var panel: View? = null
@@ -116,44 +118,87 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
             Point().also { @Suppress("DEPRECATION") wm.defaultDisplay.getRealSize(it) }
         }
 
+    private fun overlayParams(flags: Int) = WindowManager.LayoutParams(
+        0, 0, overlayType, flags or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, PixelFormat.TRANSLUCENT
+    ).apply {
+        gravity = Gravity.TOP or Gravity.START
+        if (Build.VERSION.SDK_INT >= 30) {
+            layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+        } else if (Build.VERSION.SDK_INT >= 28) {
+            layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
+    }
+
+    /**
+     * Two windows: the visible pill (does not take touches) and the touch box (invisible,
+     * any size and position). The touch box shows as a green box while Settings is open.
+     */
     private fun addHandle() {
         pill = View(this)
-        val root = FrameLayout(this).apply {
+        val vis = FrameLayout(this).apply {
             addView(pill)
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }
+        vp = overlayParams(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        val root = FrameLayout(this).apply {
             contentDescription = getString(R.string.handle_desc)
             isHapticFeedbackEnabled = true
         }
-        hp = WindowManager.LayoutParams(
-            0, 0, overlayType,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            PixelFormat.TRANSLUCENT
-        ).apply {
-            gravity = Gravity.TOP or Gravity.START
-            if (Build.VERSION.SDK_INT >= 30) {
-                layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
-            } else if (Build.VERSION.SDK_INT >= 28) {
-                layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-            }
-        }
+        hp = overlayParams(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+        pillRoot = vis
         handleRoot = root
         applyHandleLayout(attach = false)
         root.setOnTouchListener(HandleTouch())
         root.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ -> excludeSystemGesture(v) }
+        wm.addView(vis, vp)
         wm.addView(root, hp)
-        root.alpha = 0f
-        root.animate().alpha(1f).setDuration(300).start()
+        setTouchDebug(Edge.showTouchArea)
+        vis.alpha = 0f
+        vis.animate().alpha(1f).setDuration(300).start()
     }
 
-    /** Sets handle size, colour, side and position from Prefs. */
-    private fun applyHandleLayout(attach: Boolean = true) {
+    /** Shows (true) or hides (false) the touch box as a green box. The touch box works either way. */
+    fun setTouchDebug(on: Boolean) {
         val root = handleRoot ?: return
+        root.background = if (!on) null else GradientDrawable().apply {
+            setColor(0x5534C759)
+            setStroke(dp(2f).toInt(), 0xFF34C759.toInt())
+            cornerRadius = dp(6f)
+        }
+    }
+
+    /** Window positions for a side and a pill height (vy = top of the pill window). */
+    private data class Spot(val vx: Int, val vy: Int, val hx: Int, val hy: Int)
+
+    private fun spot(right: Boolean, visY: Int): Spot {
+        val s = screen()
+        val vx = if (right) s.x - vp.width else 0
+        val vy = visY.coerceIn(0, max(0, s.y - vp.height))
+        val inset = dp(Prefs.get(this, K.T_EDGE).toFloat()).toInt()
+        val hx = if (right) s.x - hp.width - inset else inset
+        val hy = vy + vp.height / 2 - hp.height / 2 + dp(Prefs.get(this, K.T_YOFF).toFloat()).toInt()
+        return Spot(vx, vy, hx, hy)
+    }
+
+    private fun place(p: Spot) {
+        vp.x = p.vx; vp.y = p.vy; hp.x = p.hx; hp.y = p.hy
+        pillRoot?.let { if (it.isAttachedToWindow) wm.updateViewLayout(it, vp) }
+        handleRoot?.let { if (it.isAttachedToWindow) wm.updateViewLayout(it, hp) }
+    }
+
+    /** Sets pill size, colour, side and position, and the touch box, from Prefs. */
+    private fun applyHandleLayout(attach: Boolean = true) {
+        if (handleRoot == null) return
         val right = Prefs.isRight(this)
         val w = dp(Prefs.get(this, K.H_WIDTH).toFloat())
         val h = dp(Prefs.get(this, K.H_HEIGHT).toFloat())
         val gap = dp(Prefs.get(this, K.H_GAP).toFloat())
-        // Touch area is much larger than the visible pill, so the finger is easy to detect.
-        hp.width = (max(w + dp(26f), dp(34f)) + gap).toInt()
-        hp.height = (h + dp(48f)).toInt()
+        // Pill window: room for the press and pull animations.
+        vp.width = (w * 1.8f + gap + dp(20f)).toInt()
+        vp.height = (h * 1.15f + dp(8f)).toInt()
+        // Touch box: set by the user.
+        hp.width = dp(Prefs.get(this, K.T_WIDTH).toFloat()).toInt()
+        hp.height = dp(Prefs.get(this, K.T_HEIGHT).toFloat()).toInt()
         pill.layoutParams = FrameLayout.LayoutParams(w.toInt(), h.toInt()).apply {
             gravity = Gravity.CENTER_VERTICAL or if (right) Gravity.END else Gravity.START
             val m = (dp(2f) + gap).toInt()
@@ -164,11 +209,9 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
             setColor(Style.handleColor(this@EdgeController))
         }
         pill.alpha = Prefs.get(this, K.H_ALPHA) / 100f
-        val s = screen()
-        hp.x = if (right) s.x - hp.width else 0
         val y = Prefs.y(this)
-        hp.y = (if (y < 0) (s.y * 0.3f).toInt() else y).coerceIn(0, max(0, s.y - hp.height))
-        if (attach && root.isAttachedToWindow) wm.updateViewLayout(root, hp)
+        val p = spot(right, if (y < 0) (screen().y * 0.3f).toInt() else y)
+        if (attach) place(p) else { vp.x = p.vx; vp.y = p.vy; hp.x = p.hx; hp.y = p.hy }
     }
 
     /** Asks the system not to use touches on the handle for the back gesture (Android 10+). */
@@ -177,23 +220,23 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
     }
 
     private fun snapToEdge() {
-        val root = handleRoot ?: return
         val s = screen()
-        val right = hp.x + hp.width / 2 > s.x / 2
+        val right = vp.x + vp.width / 2 > s.x / 2
         Prefs.setRight(this, right)
-        hp.y = hp.y.coerceIn(0, max(0, s.y - hp.height))
-        Prefs.setY(this, hp.y)
         (pill.layoutParams as FrameLayout.LayoutParams).gravity =
             Gravity.CENTER_VERTICAL or if (right) Gravity.END else Gravity.START
         pill.requestLayout()
-        val target = (if (right) s.x - hp.width else 0).toFloat()
+        val target = spot(right, vp.y)
+        Prefs.setY(this, target.vy)
+        vp.y = target.vy; hp.y = target.hy
+        val offset = target.hx - target.vx
         snapAnim?.cancel()
-        snapAnim = SpringAnimation(FloatValueHolder(hp.x.toFloat())).apply {
-            spring = SpringForce(target).setStiffness(SpringForce.STIFFNESS_MEDIUM).setDampingRatio(0.62f)
+        snapAnim = SpringAnimation(FloatValueHolder(vp.x.toFloat())).apply {
+            spring = SpringForce(target.vx.toFloat()).setStiffness(SpringForce.STIFFNESS_MEDIUM).setDampingRatio(0.62f)
             addUpdateListener { _, v, _ ->
-                hp.x = v.toInt()
-                if (root.isAttachedToWindow) wm.updateViewLayout(root, hp)
+                place(Spot(v.toInt(), target.vy, v.toInt() + offset, target.hy))
             }
+            addEndListener { _, _, _, _ -> place(target) }
             start()
         }
     }
@@ -219,7 +262,7 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
      */
     private inner class HandleTouch : View.OnTouchListener {
         private var downX = 0f; private var downY = 0f
-        private var startX = 0; private var startY = 0
+        private var startX = 0; private var startY = 0; private var relX = 0; private var relY = 0
         private var dragging = false; private var moved = false
         private var pulling = false; private var pullBase = 0f; private var pullX = 0f; private var ticked = false
         private var vt: VelocityTracker? = null
@@ -240,7 +283,8 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
                 MotionEvent.ACTION_DOWN -> {
                     excludeSystemGesture(v)
                     vt?.recycle(); vt = VelocityTracker.obtain().also { it.addMovement(e.withRaw()) }
-                    downX = e.rawX; downY = e.rawY; startX = hp.x; startY = hp.y
+                    downX = e.rawX; downY = e.rawY; startX = vp.x; startY = vp.y
+                    relX = hp.x - vp.x; relY = hp.y - vp.y
                     dragging = false; moved = false; pulling = false; ticked = false
                     snapAnim?.cancel()
                     if (!Prefs.on(this@EdgeController, K.LOCK_POS)) {
@@ -252,9 +296,9 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
                     val dx = e.rawX - downX
                     val dy = e.rawY - downY
                     if (dragging) {
-                        hp.x = (startX + dx).toInt()
-                        hp.y = (startY + dy).toInt()
-                        wm.updateViewLayout(v, hp)
+                        val nx = (startX + dx).toInt()
+                        val ny = (startY + dy).toInt()
+                        place(Spot(nx, ny, nx + relX, ny + relY))
                         return true
                     }
                     if (!moved && (abs(dx) > slop || abs(dy) > slop)) {
@@ -337,6 +381,7 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
         val sign = if (Prefs.isRight(this)) 1f else -1f
         panelCard?.translationX = travel * (1f - p) * sign
         panelScrim?.alpha = p
+        pillRoot?.alpha = 1f - p
         handleRoot?.alpha = 1f - p
         val lp = panelParams
         if (Build.VERSION.SDK_INT >= 31 && blurMax > 0 && lp != null) {
@@ -404,7 +449,7 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
             gravity = gravity or Gravity.TOP
             val free = sh - h
             topMargin = if (Prefs.on(this@EdgeController, K.P_FOLLOW)) {
-                (hp.y + hp.height / 2 - h / 2).coerceIn(0, maxOf(0, free))
+                (vp.y + vp.height / 2 - h / 2).coerceIn(0, maxOf(0, free))
             } else {
                 free * Prefs.get(this@EdgeController, K.P_VPOS).coerceIn(0, 100) / 100
             }
@@ -499,6 +544,7 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
         panelListener?.let { ClipStore.removeListener(it) }
         panelListener = null
         progress = 0f
+        pillRoot?.alpha = 1f
         handleRoot?.alpha = 1f
         if (root.isAttachedToWindow) runCatching { wm.removeView(root) }
     }

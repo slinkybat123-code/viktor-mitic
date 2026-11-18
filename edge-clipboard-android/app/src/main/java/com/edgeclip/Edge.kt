@@ -15,6 +15,10 @@ object Edge {
 
     val running get() = active != null
 
+    /** True while the Settings screen is open: the touch box shows as a green box. */
+    var showTouchArea = false
+        set(v) { field = v; active?.setTouchDebug(v) }
+
     /** Shows the handle. Uses the accessibility host (no notification) when Copy detection is on. */
     fun start(c: Context, action: String? = null) {
         val a11y = CopyWatchService.instance

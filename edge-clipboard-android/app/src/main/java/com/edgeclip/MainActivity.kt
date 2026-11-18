@@ -52,6 +52,12 @@ class MainActivity : Activity() {
         Autostart.ensureRunning(this)
         buildPermissions()
         updatePreview()
+        Edge.showTouchArea = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Edge.showTouchArea = false // the green box goes away; the touch area stays as set
     }
 
     // ---------------- Layout ----------------
@@ -129,10 +135,28 @@ class MainActivity : Activity() {
         slider(c, R.string.opacity, K.H_ALPHA, 10, 100, "%") { handleChanged() }
         slider(c, R.string.gap, K.H_GAP, 0, 32, "dp") { handleChanged() }
         slider(c, R.string.swipe_dist, K.SWIPE_DIST, 8, 80, "dp")
+
         slider(c, R.string.hold_time, K.HOLD_MS, 200, 1500, "ms", step = 50)
         toggle(c, R.string.tap_open, R.string.tap_open_desc, K.TAP_OPEN)
         toggle(c, R.string.lock_pos, R.string.lock_pos_desc, K.LOCK_POS)
         toggle(c, R.string.haptics, 0, K.HAPTICS)
+
+        // Touch area (shown as a green box while this screen is open)
+        section(R.string.sec_touch)
+        val tc = card()
+        tc.addView(TextView(this).apply {
+            setText(R.string.touch_desc); textSize = 13f; setTextColor(getColor(R.color.sub))
+            setPadding(dp(16), dp(8), dp(16), 0)
+        })
+        slider(tc, R.string.touch_width, K.T_WIDTH, 12, 160, "dp") { handleChanged() }
+        slider(tc, R.string.touch_height, K.T_HEIGHT, 30, 500, "dp", step = 5) { handleChanged() }
+        slider(tc, R.string.touch_edge, K.T_EDGE, 0, 80, "dp") { handleChanged() }
+        slider(tc, R.string.touch_yoff, K.T_YOFF, -200, 200, "dp", step = 2) { handleChanged() }
+        tc.addView(textButton(getString(R.string.touch_reset)) {
+            listOf(K.T_WIDTH, K.T_HEIGHT, K.T_EDGE, K.T_YOFF).forEach { Prefs.set(this, it, it.def) }
+            rebuilders.forEach { it() }
+            handleChanged()
+        }.apply { (layoutParams as LinearLayout.LayoutParams).marginStart = dp(8) })
 
         // Panel
         section(R.string.sec_panel)

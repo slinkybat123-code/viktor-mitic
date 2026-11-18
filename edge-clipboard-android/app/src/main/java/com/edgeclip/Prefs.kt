@@ -6,6 +6,7 @@ import android.content.Context
 enum class K(val key: String, val def: Int) {
     // Handle
     H_WIDTH("w", 7), H_HEIGHT("h", 72), H_ALPHA("a", 65), H_GAP("gap", 0), H_COLOR("hcol", 0),
+    T_WIDTH("tw", 34), T_HEIGHT("th", 120), T_EDGE("tedge", 0), T_YOFF("tyoff", 0),
     TAP_OPEN("tap", 0), SWIPE_DIST("swipe", 20), HOLD_MS("hold", 450), LOCK_POS("lock", 0), HAPTICS("hap", 1),
     // Panel
     THEME("theme", 0), P_WIDTH("pw", 184), P_ALPHA("pa", 72), BLUR("blur", 28), DIM("dim", 20),

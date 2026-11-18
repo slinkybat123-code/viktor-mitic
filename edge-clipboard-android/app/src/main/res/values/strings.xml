@@ -120,4 +120,11 @@
     <string name="panel_vpos_desc">0% = top, 50% = centre, 100% = bottom.</string>
     <string name="panel_follow">Follow handle position</string>
     <string name="panel_follow_desc">The panel opens centred on the handle. Panel position is not used.</string>
+    <string name="sec_touch">Touch area</string>
+    <string name="touch_desc">The green box shows where the handle takes your finger. You see it only while this screen is open. When you leave the app, the box goes away, but the touch area stays as you set it.</string>
+    <string name="touch_width">Touch width</string>
+    <string name="touch_height">Touch height</string>
+    <string name="touch_edge">Touch distance from edge</string>
+    <string name="touch_yoff">Touch up / down</string>
+    <string name="touch_reset">Reset touch area</string>
 </resources>
