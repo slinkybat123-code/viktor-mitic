@@ -31,6 +31,7 @@ class MainActivity : Activity() {
 
     private lateinit var root: LinearLayout
     private lateinit var permCard: LinearLayout
+    private lateinit var profileCard: LinearLayout
     private lateinit var preview: FrameLayout
     private lateinit var folderLabel: TextView
     private lateinit var mainToggle: Switch
@@ -111,6 +112,10 @@ class MainActivity : Activity() {
             layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(300))
         }
         root.addView(preview)
+
+        section(R.string.sec_profiles)
+        profileCard = card()
+        buildProfiles()
 
         section(R.string.permissions)
         permCard = card()
@@ -245,6 +250,99 @@ class MainActivity : Activity() {
             .apply { gravity = Gravity.CENTER; setPadding(0, dp(8), 0, dp(32)) }
     }
 
+    // ---------------- Profiles ----------------
+
+    private fun buildProfiles() {
+        val pc = profileCard
+        pc.removeAllViews()
+        pc.addView(TextView(this).apply {
+            setText(R.string.profiles_desc); textSize = 13f; setTextColor(getColor(R.color.sub))
+            setPadding(dp(16), dp(8), dp(16), dp(4))
+        })
+        pc.addView(pillButton(getString(R.string.profile_save_new)) { askName(null) })
+        for (name in Profiles.names(this)) {
+            val row = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL; setPadding(dp(16), 0, dp(4), 0) }
+            row.addView(TextView(this).apply {
+                text = name; textSize = 16f; setTextColor(getColor(R.color.text))
+                setOnClickListener { askName(name) }
+                contentDescription = getString(R.string.profile_rename_desc, name)
+            }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+            row.addView(textButton(getString(R.string.profile_apply)) {
+                Profiles.apply(this, name)
+                refreshAll()
+                android.widget.Toast.makeText(this, getString(R.string.profile_applied, name), android.widget.Toast.LENGTH_SHORT).show()
+            })
+            row.addView(textButton(getString(R.string.profile_update)) {
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.profile_update_title, name))
+                    .setMessage(R.string.profile_update_msg)
+                    .setPositiveButton(R.string.profile_update) { _, _ -> Profiles.save(this, name) }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            })
+            row.addView(textButton(getString(R.string.delete), danger = true) {
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.profile_delete_title, name))
+                    .setPositiveButton(R.string.delete) { _, _ -> Profiles.delete(this, name); buildProfiles() }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            })
+            pc.addView(row)
+        }
+        val io = LinearLayout(this).apply { setPadding(dp(8), 0, dp(8), dp(4)) }
+        io.addView(textButton(getString(R.string.profile_export)) {
+            @Suppress("DEPRECATION")
+            startActivityForResult(Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE)
+                .setType("application/json").putExtra(Intent.EXTRA_TITLE, "edge-clipboard-profiles.json"), REQ_EXPORT)
+        })
+        io.addView(textButton(getString(R.string.profile_import)) {
+            @Suppress("DEPRECATION")
+            startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE)
+                .setType("*/*"), REQ_IMPORT)
+        })
+        pc.addView(io)
+    }
+
+    /** New profile (old == null) or rename. */
+    private fun askName(old: String?) {
+        val input = android.widget.EditText(this).apply {
+            setText(old ?: getString(R.string.profile_default_name, Profiles.names(this@MainActivity).size + 1))
+            selectAll(); isSingleLine = true
+        }
+        val box = FrameLayout(this).apply { setPadding(dp(20), dp(8), dp(20), 0); addView(input) }
+        AlertDialog.Builder(this)
+            .setTitle(if (old == null) R.string.profile_save_new else R.string.profile_rename)
+            .setView(box)
+            .setPositiveButton(if (old == null) R.string.profile_save else R.string.profile_rename) { _, _ ->
+                val name = input.text.toString().trim().take(40)
+                if (name.isEmpty() || name == old) return@setPositiveButton
+                val go = {
+                    if (old == null) Profiles.save(this, name) else Profiles.rename(this, old, name)
+                    buildProfiles()
+                }
+                if (Profiles.exists(this, name)) {
+                    AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.profile_replace_title, name))
+                        .setPositiveButton(R.string.profile_replace) { _, _ -> go() }
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show()
+                } else go()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+        input.requestFocus()
+    }
+
+    /** After a profile is applied: every control, the preview and the handle show the new values. */
+    private fun refreshAll() {
+        build()
+        mainToggle.isChecked = Prefs.enabled(this) && canShow()
+        buildPermissions()
+        updatePreview()
+        handleChanged()
+        Edge.showTouchArea = true
+    }
+
     // ---------------- Preview ----------------
 
     private fun updatePreview() {
@@ -341,7 +439,26 @@ class MainActivity : Activity() {
     override fun onActivityResult(req: Int, res: Int, data: Intent?) {
         super.onActivityResult(req, res, data)
         val uri = data?.data
-        if (req != REQ_FOLDER || res != RESULT_OK || uri == null) return
+        if (res != RESULT_OK || uri == null) return
+        if (req == REQ_EXPORT) {
+            val ok = runCatching {
+                contentResolver.openOutputStream(uri, "wt")?.use { it.write(Profiles.exportJson(this).toByteArray()) }
+            }.isSuccess
+            android.widget.Toast.makeText(this, if (ok) R.string.profile_exported else R.string.profile_io_failed,
+                android.widget.Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (req == REQ_IMPORT) {
+            val n = runCatching {
+                Profiles.importJson(this, contentResolver.openInputStream(uri)!!.bufferedReader().use { it.readText() })
+            }.getOrDefault(-1)
+            android.widget.Toast.makeText(this,
+                if (n < 0) getString(R.string.profile_io_failed) else getString(R.string.profile_imported, n),
+                android.widget.Toast.LENGTH_SHORT).show()
+            buildProfiles()
+            return
+        }
+        if (req != REQ_FOLDER) return
         runCatching {
             contentResolver.takePersistableUriPermission(uri,
                 Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
@@ -500,5 +617,9 @@ class MainActivity : Activity() {
             setOnClickListener { onClick() }
         }
 
-    companion object { private const val REQ_FOLDER = 7 }
+    companion object {
+        private const val REQ_FOLDER = 7
+        private const val REQ_EXPORT = 8
+        private const val REQ_IMPORT = 9
+    }
 }

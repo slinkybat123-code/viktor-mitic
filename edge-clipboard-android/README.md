@@ -22,6 +22,7 @@ A floating edge handle that opens a clipboard history panel, in the style of the
 
 ## Settings (all adjustable in the app, with a live preview)
 - **Handle:** screen side, colour, width, height, opacity, distance from edge, swipe distance, hold time, tap to open, lock position, vibration.
+- **Profiles:** save all settings under a name, then apply, update, rename or delete it. Export and import profiles as a JSON file (backup or new phone). Clips are not part of a profile.
 - **Touch area:** width, height, distance from the edge, and up/down offset of the area that takes your finger. While Settings is open, it shows as a green box; when you leave the app, the box goes away and the touch area stays as set.
 - **Panel:** theme (system, light, dark), width, height, position (top to bottom) or follow the handle, opacity, background blur (Android 12+), background dim, corner radius, space at top, animation speed.
 - **Clips:** text size, preview lines, clip opacity, corner radius, space between clips, padding, Copy bar on or off, Copy bar height and text size, keep original colours, close after copy.
@@ -70,6 +71,7 @@ Without copy detection, only the last item you copied before you opened the pane
 - [ ] Copy text in Chrome or WhatsApp. The clip shows in the panel.
 - [ ] Copy 31 clips. Only 30 stay. Pinned clips stay.
 - [ ] Open Settings: a green box shows the touch area. Change the 4 touch sliders: the box changes at once. Leave the app: the box is gone, and swipes work in the area you set.
+- [ ] Save a profile, change some settings, apply the profile: all settings come back. Export, uninstall, reinstall, import: the profiles come back.
 - [ ] Rotation repositions the handle.
 - [ ] Restart the phone. The handle comes back without opening the app. Clips, pins, settings and scroll position are the same.
 - [ ] Force-stop the app in Settings, then wait up to 15 minutes or open the app. The handle comes back.

@@ -127,4 +127,24 @@
     <string name="touch_edge">Touch distance from edge</string>
     <string name="touch_yoff">Touch up / down</string>
     <string name="touch_reset">Reset touch area</string>
+    <string name="sec_profiles">Profiles</string>
+    <string name="profiles_desc">Save all your settings (look, handle, touch area, panel, clips and storage options) under a name. Apply a profile to get them back. Your clips do not change.</string>
+    <string name="profile_save_new">Save current settings as profile</string>
+    <string name="profile_save">Save</string>
+    <string name="profile_default_name">Profile %1$d</string>
+    <string name="profile_apply">Apply</string>
+    <string name="profile_applied">Profile \"%1$s\" applied</string>
+    <string name="profile_update">Update</string>
+    <string name="profile_update_title">Update \"%1$s\"?</string>
+    <string name="profile_update_msg">This replaces the saved settings in this profile with your current settings.</string>
+    <string name="profile_delete_title">Delete profile \"%1$s\"?</string>
+    <string name="profile_rename">Rename profile</string>
+    <string name="profile_rename_desc">%1$s. Tap to rename.</string>
+    <string name="profile_replace_title">A profile named \"%1$s\" exists. Replace it?</string>
+    <string name="profile_replace">Replace</string>
+    <string name="profile_export">Export profiles</string>
+    <string name="profile_import">Import profiles</string>
+    <string name="profile_exported">Profiles exported</string>
+    <string name="profile_imported">%1$d profiles imported</string>
+    <string name="profile_io_failed">Could not read or write the file</string>
 </resources>
