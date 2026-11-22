@@ -33,7 +33,7 @@
     <string name="perm_battery">Unrestricted battery</string>
     <string name="perm_battery_desc">Stops ColorOS from closing the handle.</string>
     <string name="coloros_title">Oppo / ColorOS</string>
-    <string name="coloros_tips">1. Settings &gt; Apps &gt; Edge Clipboard &gt; Battery usage: allow background activity and auto launch.\n2. In Recent apps, lock Edge Clipboard (pull the card down).\n3. If the back gesture still takes your swipe, increase \"Distance from edge\".\n4. If Copy detection turns off after a restart, turn it on again in Accessibility.</string>
+    <string name="coloros_tips">0. Do not swipe Edge Clipboard away in Recent apps: ColorOS then force-stops it and the handle disappears. (This settings screen is no longer listed there.)\n1. Settings &gt; Apps &gt; Edge Clipboard &gt; Battery usage: allow background activity and auto launch.\n2. In Recent apps, lock Edge Clipboard (pull the card down).\n3. If the back gesture still takes your swipe, increase \"Distance from edge\".\n4. If Copy detection turns off after a restart, turn it on again in Accessibility.</string>
     <string name="copy">Copy</string>
     <string name="back">Back</string>
     <string name="image_clip">Image</string>
@@ -147,4 +147,10 @@
     <string name="profile_exported">Profiles exported</string>
     <string name="profile_imported">%1$d profiles imported</string>
     <string name="profile_io_failed">Could not read or write the file</string>
+    <string name="a11y_stopped">Copy detection stopped</string>
+    <string name="a11y_stopped_desc">It is on, but Android stopped it (\"malfunctioning\"). Open Accessibility, turn Edge Clipboard copy detection off, then on again.</string>
+    <string name="sec_diag">Diagnostics</string>
+    <string name="diag_none">No errors saved.</string>
+    <string name="diag_share">Share error report</string>
+    <string name="diag_clear">Clear</string>
 </resources>

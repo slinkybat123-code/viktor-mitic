@@ -39,15 +39,29 @@ class EdgeService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        goForeground()
+        try {
+            goForeground()
+        } catch (t: Throwable) {
+            // Android can refuse a foreground start from the background. Do not crash: stop quietly.
+            CrashLog.caught(this, "EdgeService.goForeground", t)
+            stopSelf()
+            return
+        }
         // The accessibility host has priority: it needs no notification.
         if (CopyWatchService.instance != null || !Settings.canDrawOverlays(this)) { stopSelf(); return }
         if (Prefs.on(this, K.AUTOSTART)) Autostart.scheduleWatchdog(this)
-        controller = EdgeController(this, WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY).also { it.start() }
+        val ctl = EdgeController(this, WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+        try {
+            ctl.start(); controller = ctl
+        } catch (t: Throwable) {
+            CrashLog.caught(this, "EdgeService.start", t)
+            runCatching { ctl.destroy() }
+            stopSelf()
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        goForeground()
+        runCatching { goForeground() }
         if (intent?.action == Edge.ACTION_STOP) {
             Prefs.setEnabled(this, false); Autostart.cancelWatchdog(this); stopSelf()
         } else controller?.command(intent?.action)

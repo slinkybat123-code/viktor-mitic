@@ -26,7 +26,15 @@ class CopyWatchService : AccessibilityService() {
     fun showHandle() {
         if (controller != null) return
         EdgeService.stop(this) // the fallback host (with notification) is no longer needed
-        controller = EdgeController(this, WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY).also { it.start() }
+        val ctl = EdgeController(this, WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY)
+        try {
+            ctl.start()
+            controller = ctl
+        } catch (t: Throwable) {
+            // Never let a window error stop the accessibility service ("malfunctioning").
+            CrashLog.caught(this, "showHandle", t)
+            runCatching { ctl.destroy() }
+        }
     }
 
     fun hideHandle() {
@@ -62,6 +70,10 @@ class CopyWatchService : AccessibilityService() {
     private val words = listOf("copy", "copied", "clipboard", "kopieren", "kopiert", "copiar", "copier", "copia", "复制")
 
     override fun onAccessibilityEvent(e: AccessibilityEvent) {
+        try { handleEvent(e) } catch (t: Throwable) { CrashLog.caught(this, "onAccessibilityEvent", t) }
+    }
+
+    private fun handleEvent(e: AccessibilityEvent) {
         if (e.packageName == packageName) return
         val text = (e.text.joinToString(" ") + " " + (e.contentDescription ?: "")).lowercase()
         val hit = when (e.eventType) {

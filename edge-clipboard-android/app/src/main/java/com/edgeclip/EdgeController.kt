@@ -82,6 +82,7 @@ class EdgeController(base: Context, private val overlayType: Int) : ContextWrapp
 
     fun destroy() {
         if (Edge.active === this) Edge.active = null
+        if (!::wm.isInitialized) return // start() did not run
         cm.removePrimaryClipChangedListener(clipListener)
         snapAnim?.cancel()
         closePanel(animate = false)

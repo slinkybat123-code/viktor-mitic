@@ -231,6 +231,25 @@ class MainActivity : Activity() {
                 .show()
         })
 
+        // Diagnostics
+        section(R.string.sec_diag)
+        val dc = card()
+        val err = CrashLog.read(this)
+        dc.addView(TextView(this).apply {
+            text = if (err == null) getString(R.string.diag_none) else err.lineSequence().take(4).joinToString("\n")
+            textSize = 13f; setTextColor(getColor(if (err == null) R.color.sub else R.color.text))
+            setPadding(dp(16), dp(10), dp(16), dp(4))
+        })
+        if (err != null) {
+            val b = LinearLayout(this).apply { setPadding(dp(8), 0, dp(8), dp(4)) }
+            b.addView(textButton(getString(R.string.diag_share)) {
+                startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain")
+                    .putExtra(Intent.EXTRA_SUBJECT, "Edge Clipboard error").putExtra(Intent.EXTRA_TEXT, err), null))
+            })
+            b.addView(textButton(getString(R.string.diag_clear)) { CrashLog.clear(this); build(); buildPermissions(); updatePreview() })
+            dc.addView(b)
+        }
+
         // ColorOS + reset
         section(R.string.coloros_title)
         card().addView(text(getString(R.string.coloros_tips), 14f, R.color.text, add = false).apply {
@@ -384,6 +403,12 @@ class MainActivity : Activity() {
 
     private fun buildPermissions() {
         permCard.removeAllViews()
+        if (a11yOn() && CopyWatchService.instance == null) {
+            // On in Android settings, but not running: ColorOS stopped the app, or it crashed.
+            perm(R.string.a11y_stopped, R.string.a11y_stopped_desc, false) {
+                startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            }
+        }
         perm(R.string.perm_a11y, R.string.perm_a11y_desc, a11yOn()) {
             // Google Play requires a prominent disclosure and consent before this step.
             AlertDialog.Builder(this)
