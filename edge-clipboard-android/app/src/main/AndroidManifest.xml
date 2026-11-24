@@ -20,6 +20,10 @@
 
         <!-- Not in Recent apps: ColorOS force-stops apps that are swiped away there, and that
              also stops Copy detection, which shows the handle. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${admobAppId}" />
+
         <activity
             android:name=".MainActivity"
             android:excludeFromRecents="true"

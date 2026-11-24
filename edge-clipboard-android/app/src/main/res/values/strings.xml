@@ -153,4 +153,5 @@
     <string name="diag_none">No errors saved.</string>
     <string name="diag_share">Share error report</string>
     <string name="diag_clear">Clear</string>
+    <string name="ad_privacy">Ad privacy choices</string>
 </resources>

@@ -100,7 +100,7 @@ Play Console > **Grow users > Store presence > Main store listing**. Copy the te
 ## Step 8. App content forms
 Play Console > **Policy and programs > App content**. Use these answers:
 
-**Ads:** No, the app has no ads.
+**Ads:** **Yes, the app contains ads** (AdMob banner on the settings screen only). Play shows "Contains ads" on the listing.
 
 **App access:** All functionality is available without special access.
 
@@ -109,8 +109,17 @@ Play Console > **Policy and programs > App content**. Use these answers:
 **Target audience:** 18 and over (this avoids the extra rules for apps for children).
 
 **Data safety:**
-- Does your app collect or share any of the required user data types? **No.**
-- Reason: all data stays on the device, and the app has no internet permission. (Data that stays on the device and is not sent off it is not "collected" in Google's definition.)
+The AdMob SDK collects data, so the answers are **Yes**. Clips and settings stay on the device and are not declared.
+- Does your app collect or share any of the required user data types? **Yes.**
+- Is all of the user data collected by your app encrypted in transit? **Yes.**
+- Do you provide a way for users to request that their data is deleted? **No** (the app has no account; users reset the advertising ID in Android settings).
+- Data types — select these, each **Collected and Shared**, purpose **Advertising or marketing** and **Analytics**, **not required to be optional** (processing is ephemeral: **No**):
+  - **Device or other IDs** (advertising ID)
+  - **Location > Approximate location** (from the IP address)
+  - **App activity > App interactions** (ad taps and views)
+  - **App info and performance > Crash logs** and **Diagnostics** (purpose: Analytics)
+- Google's own guide for these answers: https://developers.google.com/admob/android/privacy/play-data-disclosure
+- **Advertising ID declaration** (App content): **Yes**, the app uses the advertising ID, for **Advertising or marketing**.
 
 **Government app:** No. **Financial features:** None. **Health:** No.
 
@@ -148,6 +157,25 @@ After the first release exists in Play Console (the first bundle must be uploade
 3. Back in Play Console: **Users and permissions > Invite new users**. Paste the service account email. Under **App permissions**, add Edge Clipboard with **Release apps to testing tracks** (and **Release to production** if you want).
 4. GitHub > **Settings > Secrets and variables > Actions > New repository secret**: name `PLAY_SERVICE_ACCOUNT_JSON`, value = the full text of the `.json` file.
 5. To release: increase `versionCode`, push to `main`, then **Actions > Edge Clipboard release bundle > Run workflow**. Select the track (`internal`, `alpha` = closed test, `beta`, `production`) and the status (`draft` lets you check it in Play Console first; `completed` rolls it out at once).
+
+## Step 12. Ads with AdMob (real ads)
+The app shows Google's **test ads** until you add your own IDs. Do not tap your own real ads: AdMob can close your account for that.
+1. Make an AdMob account: https://admob.google.com (sign in with the same Google account as Play Console). Add your payment and tax details.
+2. **Apps > Add app > Android**. When asked if the app is on Google Play: select **No** first (you can link it after it is published). Name: Edge Clipboard.
+3. Copy the **App ID** (`ca-app-pub-…~…`).
+4. **Ad units > Add ad unit > Banner**. Name: Settings banner. Copy the **Ad unit ID** (`ca-app-pub-…/…`).
+5. GitHub > **Settings > Secrets and variables > Actions**: add `ADMOB_APP_ID` and `ADMOB_BANNER_ID` with those values. The release workflow then builds with your real IDs. (For a PC build, add `admobAppId=…` and `admobBannerId=…` to `C:\Users\<you>\.gradle\gradle.properties`.)
+6. **Privacy & messaging > GDPR**: create a consent message for the app and publish it. The app already shows it in the EEA, UK and Switzerland. Do the same for **US state regulations** if you want ads in those states.
+7. **app-ads.txt** (AdMob asks for it to pay full rates): AdMob shows one line under **Apps > View all apps > app-ads.txt**. It must be at the root of the website in your Play listing.
+   - Easiest: create a new public GitHub repository named `slinkybat123-code.github.io`, add a file `app-ads.txt` with that line, and turn on Pages for it. Then set the Play listing website to `https://slinkybat123-code.github.io`.
+8. After Play publishes the app: AdMob > App settings > **Link to app store**.
+
+## Step 13. Website and APK download
+The website is `docs/index.html` (download page) and `docs/privacy.html`.
+1. Merge pull request #1, then **Settings > Pages > Deploy from a branch > main / docs**. The site goes live at `https://slinkybat123-code.github.io/viktor-mitic/`.
+2. To publish a signed APK for the **Download APK** button: after the 4 key secrets are in place (step 3), create a tag and push it, for example in GitHub > **Releases > Draft a new release > Choose a tag: `edge-clipboard-v1.8.0` > Create new tag > Publish release**. The workflow builds `EdgeClipboard.apk` and attaches it to that release.
+   (If you publish the release by hand first, the workflow adds the APK to it.)
+3. A phone with the test (debug) APK must uninstall it once before it can install the signed APK, because the signatures are different.
 
 ## Each update
 1. Increase `versionCode` (for example 6 → 7) and `versionName` in `app/build.gradle.kts`.

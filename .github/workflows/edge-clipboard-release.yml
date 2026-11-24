@@ -1,6 +1,7 @@
 # Builds a signed Android App Bundle (.aab) for Google Play and (optionally) uploads it.
 # Required secrets: KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD.
-# Optional secret for automatic upload: PLAY_SERVICE_ACCOUNT_JSON (see edge-clipboard-android/PUBLISHING.md).
+# Optional secrets: PLAY_SERVICE_ACCOUNT_JSON (upload to Play), ADMOB_APP_ID and ADMOB_BANNER_ID (real ads).
+# Publishing a GitHub Release with a tag like "edge-clipboard-v1.8.0" attaches the signed APK for the website.
 name: Edge Clipboard release bundle
 
 on:
@@ -16,12 +17,18 @@ on:
         type: choice
         default: draft
         options: [draft, completed]
-  push:
-    tags: ["edge-clipboard-v*"]
+  release:
+    types: [published]
+
+permissions:
+  contents: write
 
 jobs:
   bundle:
     runs-on: ubuntu-latest
+    env:
+      ORG_GRADLE_PROJECT_admobAppId: ${{ secrets.ADMOB_APP_ID }}
+      ORG_GRADLE_PROJECT_admobBannerId: ${{ secrets.ADMOB_BANNER_ID }}
     defaults:
       run:
         working-directory: edge-clipboard-android
@@ -48,14 +55,23 @@ jobs:
             echo "keyPassword=$KEY_PASSWORD"
           } > keystore.properties
       - name: Build bundle
-        run: chmod +x gradlew && ./gradlew bundleRelease --no-daemon
+        run: chmod +x gradlew && ./gradlew bundleRelease assembleRelease --no-daemon && cp app/build/outputs/apk/release/app-release.apk EdgeClipboard.apk
       - name: Remove signing files
         if: always()
         run: rm -f upload.jks keystore.properties
       - uses: actions/upload-artifact@v4
         with:
-          name: edge-clipboard-release-aab
-          path: edge-clipboard-android/app/build/outputs/bundle/release/app-release.aab
+          name: edge-clipboard-release
+          path: |
+            edge-clipboard-android/app/build/outputs/bundle/release/app-release.aab
+            edge-clipboard-android/EdgeClipboard.apk
+      - name: GitHub Release (website download)
+        if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags/edge-clipboard-v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Edge Clipboard ${{ github.ref_name }}
+          files: edge-clipboard-android/EdgeClipboard.apk
+          generate_release_notes: true
       - name: Upload to Google Play
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.track != 'none' }}
         uses: r0adkll/upload-google-play@v1

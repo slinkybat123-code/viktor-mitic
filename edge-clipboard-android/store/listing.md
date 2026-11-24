@@ -26,7 +26,8 @@ FEATURES
 • Starts by itself after a phone restart. No permanent notification when Copy detection is on.
 
 PRIVACY
-• Your clips stay on your phone. The app has no internet permission.
+• Your clips stay on your phone. They are never sent anywhere and never used for ads.
+• Ads show only on the settings screen, never in the clipboard panel.
 • Clips that Android marks as sensitive, such as passwords, are not saved.
 
 ACCESSIBILITY SERVICE

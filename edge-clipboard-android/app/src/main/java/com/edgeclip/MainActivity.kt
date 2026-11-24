@@ -31,6 +31,7 @@ class MainActivity : Activity() {
 
     private lateinit var root: LinearLayout
     private lateinit var permCard: LinearLayout
+    private var adView: com.google.android.gms.ads.AdView? = null
     private lateinit var profileCard: LinearLayout
     private lateinit var preview: FrameLayout
     private lateinit var folderLabel: TextView
@@ -45,6 +46,7 @@ class MainActivity : Activity() {
         ClipStore.init(this)
         root = findViewById(R.id.root)
         build()
+        Ads.setup(this, findViewById(R.id.ad_container)) { adView = it; build(); buildPermissions(); updatePreview() }
     }
 
     override fun onResume() {
@@ -54,6 +56,11 @@ class MainActivity : Activity() {
         buildPermissions()
         updatePreview()
         Edge.showTouchArea = true
+    }
+
+    override fun onDestroy() {
+        adView?.destroy()
+        super.onDestroy()
     }
 
     override fun onPause() {
@@ -248,6 +255,11 @@ class MainActivity : Activity() {
             })
             b.addView(textButton(getString(R.string.diag_clear)) { CrashLog.clear(this); build(); buildPermissions(); updatePreview() })
             dc.addView(b)
+        }
+
+        if (Ads.privacyOptionsRequired(this)) {
+            dc.addView(textButton(getString(R.string.ad_privacy)) { Ads.showPrivacyOptions(this) }
+                .apply { (layoutParams as LinearLayout.LayoutParams).marginStart = dp(8) })
         }
 
         // ColorOS + reset
