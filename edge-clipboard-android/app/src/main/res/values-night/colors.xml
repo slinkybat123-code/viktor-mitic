@@ -1,0 +1,15 @@
+<resources>
+    <color name="bg">#FF000000</color>
+    <color name="panel">#EB0E0E10</color>
+    <color name="card">#FF26262A</color>
+    <color name="text">#FFF5F5F7</color>
+    <color name="sub">#FF9A9AA0</color>
+    <color name="accent">#FF5AA2FF</color>
+    <color name="scrim">#66000000</color>
+    <color name="handle">#FFD0D0D6</color>
+    <color name="ok">#FF4CC26B</color>
+    <color name="copy_bar">#FF1C1C20</color>
+    <color name="clear_pill">#FF3A3A4A</color>
+    <color name="danger">#FFFF6B6B</color>
+    <color name="chip_bg">#FF2C2C30</color>
+</resources>
